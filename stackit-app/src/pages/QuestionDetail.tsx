@@ -235,14 +235,14 @@ const QuestionDetail = () => {
             
 
 
-        <div data-color-mode="dark" className="bg-slate-700 rounded-md p-2">
-  <MDEditor
-    value={answer}
-    onChange={setAnswer}
-    height={200}
-    preview="edit"
-  />
-</div>
+            <div data-color-mode="dark" className="bg-slate-700 rounded-md p-2">
+            <MDEditor
+                value={answer}
+                onChange={setAnswer}
+                height={200}
+                preview="edit"
+            />
+            </div>
 
             
             <div className="flex justify-end mt-4">
