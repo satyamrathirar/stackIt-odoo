@@ -26,9 +26,9 @@ const NotFound = () => {
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 glass-dark border-b border-white/10 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="text-3xl font-bold gradient-text hover:scale-105 transition-transform duration-300">
-            StackIt
-          </Link>
+                      <Link to="/" className="text-3xl font-bold gradient-text transition-colors duration-300">
+              StackIt
+            </Link>
         </div>
       </header>
 
@@ -66,7 +66,7 @@ const NotFound = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
           <Button 
             asChild
-            className="gradient-primary hover:shadow-glow transform hover:scale-105 transition-all duration-300 font-medium px-8 py-3 text-lg"
+                            className="gradient-primary hover:shadow-glow transition-all duration-300 font-medium px-8 py-3 text-lg"
           >
             <Link to="/" className="flex items-center gap-2">
               <Home className="h-5 w-5" />

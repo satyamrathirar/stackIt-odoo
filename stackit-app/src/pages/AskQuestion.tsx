@@ -71,10 +71,10 @@ const AskQuestion = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center gap-3 text-gray-300 hover:text-white transition-all duration-300 group">
-              <ArrowLeft className="h-5 w-5 group-hover:scale-110 transition-transform" />
+              <ArrowLeft className="h-5 w-5 transition-colors" />
               <span className="font-medium">Back to Home</span>
             </Link>
-            <Link to="/" className="text-3xl font-bold gradient-text hover:scale-105 transition-transform duration-300">
+            <Link to="/" className="text-3xl font-bold gradient-text transition-colors duration-300">
               StackIt
             </Link>
           </div>
@@ -141,7 +141,7 @@ const AskQuestion = () => {
                     {tags.map((tag) => (
                       <Badge
                         key={tag}
-                        className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 hover:from-red-600/20 hover:to-pink-600/20 hover:text-red-300 cursor-pointer transition-all duration-300 border border-blue-500/20 hover:border-red-500/40 transform hover:scale-105 group"
+                        className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 hover:from-red-600/20 hover:to-pink-600/20 hover:text-red-300 cursor-pointer transition-all duration-300 border border-blue-500/20 hover:border-red-500/40 group"
                         onClick={() => removeTag(tag)}
                       >
                         {tag}
@@ -157,7 +157,7 @@ const AskQuestion = () => {
               <div className="flex justify-end pt-6 border-t border-white/10">
                 <Button
                   type="submit"
-                  className="gradient-primary hover:shadow-glow transform hover:scale-105 transition-all duration-300 font-medium px-8 py-3 text-lg"
+                  className="gradient-primary hover:shadow-glow transition-all duration-300 font-medium px-8 py-3 text-lg"
                   disabled={submitting || !title.trim() || !description.trim()}
                 >
                   {submitting ? "Submitting..." : "Submit Question"}
