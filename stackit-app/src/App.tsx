@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import AskQuestion from "./pages/AskQuestion";
 import QuestionDetail from "./pages/QuestionDetail";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +22,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/ask" element={<AskQuestion />} />
           <Route path="/question/:id" element={<QuestionDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
