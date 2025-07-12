@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+// Extended mock questions to demonstrate pagination
 const mockQuestions = [
   {
     id: 1,
@@ -36,6 +37,162 @@ const mockQuestions = [
     author: "Developer123",
     timeAgo: "4 hours ago",
     isHot: false
+  },
+  {
+    id: 3,
+    title: "How to implement authentication in Next.js",
+    description: "I need to add user authentication to my Next.js application. What's the best approach...",
+    tags: ["Next.js", "Authentication"],
+    votes: 8,
+    answers: 5,
+    views: "1 ans",
+    author: "NextDev",
+    timeAgo: "6 hours ago",
+    isHot: false
+  },
+  {
+    id: 4,
+    title: "TypeScript interface vs type",
+    description: "What's the difference between interface and type in TypeScript? When should I use each?",
+    tags: ["TypeScript"],
+    votes: 15,
+    answers: 7,
+    views: "4 ans",
+    author: "TSUser",
+    timeAgo: "1 day ago",
+    isHot: false
+  },
+  {
+    id: 5,
+    title: "CSS Grid layout tutorial",
+    description: "Can someone explain CSS Grid layout with practical examples?",
+    tags: ["CSS", "Grid"],
+    votes: 3,
+    answers: 1,
+    views: "1 ans",
+    author: "CSSLearner",
+    timeAgo: "2 days ago",
+    isHot: false
+  },
+  {
+    id: 6,
+    title: "Database optimization techniques",
+    description: "What are the best practices for optimizing database queries and performance?",
+    tags: ["Database", "Performance"],
+    votes: 22,
+    answers: 9,
+    views: "6 ans",
+    author: "DBExpert",
+    timeAgo: "3 days ago",
+    isHot: false
+  },
+  {
+    id: 7,
+    title: "Docker container management",
+    description: "How do I manage multiple Docker containers efficiently?",
+    tags: ["Docker", "DevOps"],
+    votes: 7,
+    answers: 4,
+    views: "2 ans",
+    author: "DevOpsUser",
+    timeAgo: "4 days ago",
+    isHot: false
+  },
+  {
+    id: 8,
+    title: "API rate limiting implementation",
+    description: "What's the best way to implement rate limiting in a REST API?",
+    tags: ["API", "Security"],
+    votes: 18,
+    answers: 6,
+    views: "3 ans",
+    author: "APIDev",
+    timeAgo: "5 days ago",
+    isHot: false
+  },
+  {
+    id: 9,
+    title: "Vue.js vs React comparison",
+    description: "I'm choosing between Vue.js and React for a new project. What are the pros and cons?",
+    tags: ["Vue.js", "React", "Frontend"],
+    votes: 25,
+    answers: 12,
+    views: "8 ans",
+    author: "FrameworkFan",
+    timeAgo: "1 week ago",
+    isHot: false
+  },
+  {
+    id: 10,
+    title: "Microservices architecture patterns",
+    description: "What are the common patterns and best practices for microservices architecture?",
+    tags: ["Microservices", "Architecture"],
+    votes: 31,
+    answers: 15,
+    views: "10 ans",
+    author: "ArchitectUser",
+    timeAgo: "1 week ago",
+    isHot: false
+  },
+  {
+    id: 11,
+    title: "Git workflow strategies",
+    description: "What's the best Git workflow for a team of 10 developers?",
+    tags: ["Git", "Workflow"],
+    votes: 14,
+    answers: 8,
+    views: "5 ans",
+    author: "GitMaster",
+    timeAgo: "1 week ago",
+    isHot: false
+  },
+  {
+    id: 12,
+    title: "Machine learning model deployment",
+    description: "How do I deploy a machine learning model to production?",
+    tags: ["Machine Learning", "Deployment"],
+    votes: 28,
+    answers: 11,
+    views: "7 ans",
+    author: "MLDev",
+    timeAgo: "2 weeks ago",
+    isHot: false
+  },
+  {
+    id: 13,
+    title: "Web accessibility guidelines",
+    description: "What are the key accessibility guidelines for web development?",
+    tags: ["Accessibility", "Web Development"],
+    votes: 9,
+    answers: 3,
+    views: "2 ans",
+    author: "A11yDev",
+    timeAgo: "2 weeks ago",
+    isHot: false
+  },
+  {
+    id: 14,
+    title: "GraphQL vs REST API",
+    description: "When should I choose GraphQL over REST API?",
+    tags: ["GraphQL", "REST", "API"],
+    votes: 19,
+    answers: 7,
+    views: "4 ans",
+    author: "APIArchitect",
+    timeAgo: "2 weeks ago",
+    isHot: false
+  },
+  {
+    id: 15,
+    title: "Serverless function optimization",
+    description: "How do I optimize serverless functions for better performance?",
+    tags: ["Serverless", "Performance"],
+    votes: 11,
+    answers: 5,
+    views: "3 ans",
+    author: "ServerlessDev",
+    timeAgo: "3 weeks ago",
+    isHot: false
   }
 ];
 
@@ -43,6 +200,50 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("Newest");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  // Pagination settings
+  const questionsPerPage = 5; // Show 5 questions per page
+  const predefinedPages = [1, 2, 3, 4, 5, 6, 7];
+  
+  // Calculate pagination
+  const totalQuestions = mockQuestions.length;
+  const totalPages = Math.ceil(totalQuestions / questionsPerPage);
+  
+  // Determine which pages to show
+  const getVisiblePages = () => {
+    if (totalPages <= 7) {
+      // If total pages is 7 or less, show all pages
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    } else {
+      // If more than 7 pages, show predefined pages 1-7 plus additional pages only if they have content
+      const pages = [...predefinedPages];
+      
+      // Add additional pages only if they have questions
+      for (let i = 8; i <= totalPages; i++) {
+        const startIndex = (i - 1) * questionsPerPage;
+        const endIndex = startIndex + questionsPerPage;
+        const questionsOnPage = mockQuestions.slice(startIndex, endIndex);
+        
+        if (questionsOnPage.length > 0) {
+          pages.push(i);
+        }
+      }
+      
+      return pages;
+    }
+  };
+  
+  const visiblePages = getVisiblePages();
+  
+  // Get current page questions
+  const startIndex = (currentPage - 1) * questionsPerPage;
+  const endIndex = startIndex + questionsPerPage;
+  const currentQuestions = mockQuestions.slice(startIndex, endIndex);
+  
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
@@ -139,7 +340,7 @@ const Index = () => {
 
         {/* Questions List */}
         <div className="space-y-6">
-          {mockQuestions.map((question, index) => (
+          {currentQuestions.map((question, index) => (
             <Card 
               key={question.id} 
               className="glass-dark border-white/10 hover:border-blue-500/30 card-hover group fade-in"
@@ -208,26 +409,46 @@ const Index = () => {
         {/* Pagination */}
         <div className="flex justify-center mt-12">
           <div className="flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm rounded-xl p-2 border border-white/10">
-            <Button variant="outline" size="sm" className="border-slate-600/50 text-white hover:bg-slate-700/50 transition-all duration-300">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-slate-600/50 text-white hover:bg-slate-700/50 transition-all duration-300"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
               Previous
             </Button>
-            {[1, 2, 3, 4, 5, 6, 7].map((page) => (
+            
+            {visiblePages.map((page) => (
               <Button 
                 key={page}
-                variant={page === 1 ? "default" : "outline"}
+                variant={page === currentPage ? "default" : "outline"}
                 size="sm"
-                className={page === 1 
+                className={page === currentPage 
                   ? "gradient-primary hover:shadow-glow" 
                   : "border-slate-600/50 text-white hover:bg-slate-700/50 transition-all duration-300"
                 }
+                onClick={() => handlePageChange(page)}
               >
                 {page}
               </Button>
             ))}
-            <Button variant="outline" size="sm" className="border-slate-600/50 text-white hover:bg-slate-700/50 transition-all duration-300">
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-slate-600/50 text-white hover:bg-slate-700/50 transition-all duration-300"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
               Next
             </Button>
           </div>
+        </div>
+        
+        {/* Debug info - remove in production */}
+        <div className="mt-4 text-center text-sm text-gray-400">
+          Showing {currentQuestions.length} of {totalQuestions} questions (Page {currentPage} of {totalPages})
         </div>
       </div>
     </div>
