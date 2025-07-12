@@ -1,0 +1,20 @@
+{
+  "name": "stackit-odoo",
+  "version": "1.0.0",
+  "description": "Problem Statement : StackIt is a minimal question-and-answer platform that supports collaborative learning and structured knowledge sharing. It’s designed to be simple, user-friendly, and focused on the core experience of asking and answering questions within a community.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satyamrathirar/stackIt-odoo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/satyamrathirar/stackIt-odoo/issues"
+  },
+  "homepage": "https://github.com/satyamrathirar/stackIt-odoo#readme"
+}
