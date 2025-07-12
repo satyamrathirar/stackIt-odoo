@@ -66,7 +66,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }, 0);
   };
 
-  const formatText = (format: string) => {
+  const formatText = (format: string, e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    
     const selected = getSelectedText();
     if (!selected) return;
 
@@ -92,7 +95,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     replaceSelectedText(replacement);
   };
 
-  const insertEmoji = (emoji: string) => {
+  const insertEmoji = (emoji: string, e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    
     const textarea = textareaRef.current;
     if (!textarea) return;
     
@@ -108,7 +114,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     setShowEmojiPicker(false);
   };
 
-  const insertLink = () => {
+  const insertLink = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    
     const selected = getSelectedText();
     if (!selected || !linkUrl.trim()) return;
     
@@ -118,7 +127,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     setShowLinkDialog(false);
   };
 
-  const insertImage = () => {
+  const insertImage = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    
     if (!imageUrl.trim()) return;
     
     const replacement = `![Image](${imageUrl})`;
@@ -130,7 +142,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     setShowImageDialog(false);
   };
 
-  const alignText = (alignment: string) => {
+  const alignText = (alignment: string, e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    
     const textarea = textareaRef.current;
     if (!textarea) return;
     
@@ -167,27 +182,30 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => formatText('bold')}
+            onClick={(e) => formatText('bold', e)}
             className="p-2 hover:bg-blue-500/20 hover:text-blue-400 transition-all duration-200"
             title="Bold"
+            type="button"
           >
             <Bold className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => formatText('italic')}
+            onClick={(e) => formatText('italic', e)}
             className="p-2 hover:bg-blue-500/20 hover:text-blue-400 transition-all duration-200"
             title="Italic"
+            type="button"
           >
             <Italic className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => formatText('strikethrough')}
+            onClick={(e) => formatText('strikethrough', e)}
             className="p-2 hover:bg-blue-500/20 hover:text-blue-400 transition-all duration-200"
             title="Strikethrough"
+            type="button"
           >
             <Strikethrough className="h-4 w-4" />
           </Button>
@@ -198,18 +216,20 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => formatText('bullet')}
+            onClick={(e) => formatText('bullet', e)}
             className="p-2 hover:bg-green-500/20 hover:text-green-400 transition-all duration-200"
             title="Bullet List"
+            type="button"
           >
             <List className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => formatText('numbered')}
+            onClick={(e) => formatText('numbered', e)}
             className="p-2 hover:bg-green-500/20 hover:text-green-400 transition-all duration-200"
             title="Numbered List"
+            type="button"
           >
             <ListOrdered className="h-4 w-4" />
           </Button>
@@ -220,18 +240,28 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowLinkDialog(true)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowLinkDialog(true);
+            }}
             className="p-2 hover:bg-purple-500/20 hover:text-purple-400 transition-all duration-200"
             title="Insert Link"
+            type="button"
           >
             <Link className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowImageDialog(true)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowImageDialog(true);
+            }}
             className="p-2 hover:bg-purple-500/20 hover:text-purple-400 transition-all duration-200"
             title="Insert Image"
+            type="button"
           >
             <ImageIcon className="h-4 w-4" />
           </Button>
@@ -242,25 +272,46 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowEmojiPicker(!showEmojiPicker);
+            }}
             className="p-2 hover:bg-yellow-500/20 hover:text-yellow-400 transition-all duration-200"
             title="Insert Emoji"
+            type="button"
           >
             <Smile className="h-4 w-4" />
           </Button>
           
           {showEmojiPicker && (
-            <div className="absolute bottom-full left-0 mb-2 p-3 bg-slate-800 border border-slate-600 rounded-lg shadow-lg z-50 max-w-xs">
-              <div className="grid grid-cols-8 gap-1 max-h-40 overflow-y-auto">
-                {emojis.map((emoji, index) => (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowEmojiPicker(false)}>
+              <div 
+                className="bg-slate-800 border border-slate-600 rounded-lg shadow-lg p-4 min-w-[400px] max-w-[500px] max-h-[400px]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-lg font-semibold text-white">Select Emoji</h3>
                   <button
-                    key={index}
-                    onClick={() => insertEmoji(emoji)}
-                    className="p-1 hover:bg-slate-700 rounded text-lg transition-colors"
+                    onClick={() => setShowEmojiPicker(false)}
+                    className="text-gray-400 hover:text-white transition-colors"
+                    type="button"
                   >
-                    {emoji}
+                    <X className="h-5 w-5" />
                   </button>
-                ))}
+                </div>
+                <div className="grid grid-cols-12 gap-1 max-h-80 overflow-y-auto">
+                  {emojis.map((emoji, index) => (
+                    <button
+                      key={index}
+                      onClick={(e) => insertEmoji(emoji, e)}
+                      className="p-2 hover:bg-slate-700 rounded text-lg transition-colors"
+                      type="button"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -271,27 +322,30 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => alignText('left')}
+            onClick={(e) => alignText('left', e)}
             className="p-2 hover:bg-orange-500/20 hover:text-orange-400 transition-all duration-200"
             title="Align Left"
+            type="button"
           >
             <AlignLeft className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => alignText('center')}
+            onClick={(e) => alignText('center', e)}
             className="p-2 hover:bg-orange-500/20 hover:text-orange-400 transition-all duration-200"
             title="Align Center"
+            type="button"
           >
             <AlignCenter className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => alignText('right')}
+            onClick={(e) => alignText('right', e)}
             className="p-2 hover:bg-orange-500/20 hover:text-orange-400 transition-all duration-200"
             title="Align Right"
+            type="button"
           >
             <AlignRight className="h-4 w-4" />
           </Button>
@@ -323,13 +377,18 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 />
               </div>
               <div className="flex gap-2">
-                <Button onClick={insertLink} className="flex-1">
+                <Button onClick={(e) => insertLink(e)} className="flex-1" type="button">
                   Insert Link
                 </Button>
                 <Button 
                   variant="outline" 
-                  onClick={() => setShowLinkDialog(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowLinkDialog(false);
+                  }}
                   className="flex-1"
+                  type="button"
                 >
                   Cancel
                 </Button>
@@ -355,13 +414,18 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 />
               </div>
               <div className="flex gap-2">
-                <Button onClick={insertImage} className="flex-1">
+                <Button onClick={(e) => insertImage(e)} className="flex-1" type="button">
                   Insert Image
                 </Button>
                 <Button 
                   variant="outline" 
-                  onClick={() => setShowImageDialog(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowImageDialog(false);
+                  }}
                   className="flex-1"
+                  type="button"
                 >
                   Cancel
                 </Button>
