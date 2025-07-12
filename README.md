@@ -27,14 +27,17 @@ Satyam Rathi - satyam.rathi47@gmail.com
 - **Deployment**: Render
 
 
-## 🚀 Getting Started
 
-### 🔧 Prerequisites
-Make sure you have these installed:
-- Node.js (v18+)
-- Python 3.8+
-- Odoo 16+
-- PostgreSQL
+## 📁 Project Structure
+```
+stackit-app/
+├── src/
+│   ├── components/
+├── app.tsx
+├── main.tsx             
+├── .env                
+└── README.md
+```
 
 ---
 
@@ -45,3 +48,4 @@ cd stackit-app
 npm install
 npm run dev
 ```
+
