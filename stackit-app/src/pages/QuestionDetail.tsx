@@ -279,16 +279,16 @@ const QuestionDetail = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center gap-3 text-gray-300 hover:text-white transition-all duration-300 group">
-              <ArrowLeft className="h-5 w-5 group-hover:scale-110 transition-transform" />
+              <ArrowLeft className="h-5 w-5 transition-colors" />
               <span className="font-medium">Back to Questions</span>
             </Link>
-            <Link to="/" className="text-3xl font-bold gradient-text hover:scale-105 transition-transform duration-300">
+            <Link to="/" className="text-3xl font-bold gradient-text transition-colors duration-300">
               StackIt
             </Link>
           </div>
           
           <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-glow group-hover:shadow-glow-purple transition-all duration-300 group-hover:scale-110">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-glow group-hover:shadow-glow-purple transition-all duration-300">
               <span className="text-sm font-medium">U</span>
             </div>
           </div>
@@ -320,7 +320,7 @@ const QuestionDetail = () => {
                       : 'hover:bg-green-500/10 hover:text-green-400'
                   }`}
                 >
-                  <ChevronUp className="h-7 w-7 group-hover:scale-110 transition-transform" />
+                  <ChevronUp className="h-7 w-7 transition-colors" />
                 </Button>
                 <span className="text-2xl font-bold text-gradient-primary">{question.votes}</span>
                 <Button
@@ -334,7 +334,7 @@ const QuestionDetail = () => {
                       : 'hover:bg-red-500/10 hover:text-red-400'
                   }`}
                 >
-                  <ChevronDown className="h-7 w-7 group-hover:scale-110 transition-transform" />
+                  <ChevronDown className="h-7 w-7 transition-colors" />
                 </Button>
               </div>
 
@@ -358,7 +358,7 @@ const QuestionDetail = () => {
                     {question.tags.map((tag) => (
                       <Badge 
                         key={tag} 
-                        className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 hover:from-blue-600/30 hover:to-purple-600/30 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 cursor-pointer transform hover:scale-105"
+                        className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 hover:from-blue-600/30 hover:to-purple-600/30 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 cursor-pointer"
                       >
                         {tag}
                       </Badge>
@@ -371,11 +371,11 @@ const QuestionDetail = () => {
                       <span className="text-sm">{question.views} views</span>
                     </div>
                     <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white transition-all duration-300 group">
-                      <Share className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                      <Share className="h-4 w-4 mr-2 transition-colors" />
                       Share
                     </Button>
                     <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white transition-all duration-300 group">
-                      <Flag className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                      <Flag className="h-4 w-4 mr-2 transition-colors" />
                       Flag
                     </Button>
                   </div>
@@ -422,7 +422,7 @@ const QuestionDetail = () => {
                             : 'hover:bg-green-500/10 hover:text-green-400'
                         }`}
                       >
-                        <ChevronUp className="h-7 w-7 group-hover:scale-110 transition-transform" />
+                        <ChevronUp className="h-7 w-7 transition-colors" />
                       </Button>
                       <span className="text-2xl font-bold text-gradient-primary">{answer.votes}</span>
                       <Button
@@ -436,7 +436,7 @@ const QuestionDetail = () => {
                             : 'hover:bg-red-500/10 hover:text-red-400'
                         }`}
                       >
-                        <ChevronDown className="h-7 w-7 group-hover:scale-110 transition-transform" />
+                        <ChevronDown className="h-7 w-7 transition-colors" />
                       </Button>
                       {answer.is_accepted && (
                         <div className="mt-3 p-2 bg-green-500/20 rounded-full">
@@ -468,11 +468,11 @@ const QuestionDetail = () => {
                       <div className="flex items-center justify-between pt-4 border-t border-white/10">
                         <div className="flex items-center gap-4">
                           <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white transition-all duration-300 group">
-                            <Share className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                            <Share className="h-4 w-4 mr-2 transition-colors" />
                             Share
                           </Button>
                           <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white transition-all duration-300 group">
-                            <Flag className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                            <Flag className="h-4 w-4 mr-2 transition-colors" />
                             Flag
                           </Button>
                         </div>
@@ -511,7 +511,7 @@ const QuestionDetail = () => {
               <div className="flex justify-end pt-4">
                 <Button 
                   onClick={handleSubmitAnswer}
-                  className="gradient-primary hover:shadow-glow transform hover:scale-105 transition-all duration-300 font-medium px-8 py-3 text-lg"
+                  className="gradient-primary hover:shadow-glow transition-all duration-300 font-medium px-8 py-3 text-lg"
                   disabled={!answer.trim() || submitting}
                 >
                   {submitting ? 'Submitting...' : 'Submit Answer'}

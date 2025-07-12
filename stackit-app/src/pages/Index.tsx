@@ -131,21 +131,21 @@ const Index = () => {
       {/* Header */}
       <header className="glass-dark border-b border-white/10 sticky top-0 z-50 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="text-3xl font-bold gradient-text hover:scale-105 transition-transform duration-300">
-            StackIt
-          </Link>
+                      <Link to="/" className="text-3xl font-bold gradient-text transition-colors duration-300">
+              StackIt
+            </Link>
           
           <div className="flex items-center gap-6">
             {isLoggedIn ? (
               <>
                 <div className="relative group">
-                  <Bell className="h-6 w-6 text-gray-300 hover:text-white cursor-pointer transition-all duration-300 group-hover:scale-110" />
+                  <Bell className="h-6 w-6 text-gray-300 hover:text-white cursor-pointer transition-all duration-300" />
                   <span className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-xs rounded-full h-5 w-5 flex items-center justify-center text-white font-medium pulse-glow">
                     2
                   </span>
                 </div>
                 <div className="flex items-center gap-3 group cursor-pointer">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-glow group-hover:shadow-glow-purple transition-all duration-300 group-hover:scale-110">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-glow group-hover:shadow-glow-purple transition-all duration-300">
                     <User className="h-5 w-5" />
                   </div>
                   <span className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">{userName}</span>
@@ -161,7 +161,7 @@ const Index = () => {
             ) : (
               <Button 
                 onClick={() => navigate("/login")}
-                className="gradient-primary hover:shadow-glow transform hover:scale-105 transition-all duration-300 font-medium px-6 py-2"
+                className="gradient-primary hover:shadow-glow transition-all duration-300 font-medium px-6 py-2"
               >
                 Login
               </Button>
@@ -194,7 +194,7 @@ const Index = () => {
           <div className="flex gap-3">
             <Button 
               variant="outline" 
-              className="gradient-primary text-white border-transparent hover:shadow-glow transform hover:scale-105 transition-all duration-300 font-medium"
+              className="gradient-primary text-white border-transparent hover:shadow-glow transition-all duration-300 font-medium"
             >
               <Link to="/ask" className="flex items-center gap-2">
                 <Plus className="h-5 w-5" />
@@ -274,7 +274,7 @@ const Index = () => {
                   <div className="flex flex-col lg:flex-row gap-6">
                     {/* Vote and Stats */}
                     <div className="flex lg:flex-col items-center lg:items-start gap-6 lg:gap-3 min-w-[140px]">
-                      <div className="flex items-center gap-2 text-sm group-hover:scale-110 transition-transform duration-300">
+                      <div className="flex items-center gap-2 text-sm transition-colors duration-300">
                         <ChevronUp className="h-5 w-5 text-green-400" />
                         <span className="text-green-400 font-semibold text-lg">{question.votes}</span>
                       </div>
@@ -295,10 +295,10 @@ const Index = () => {
 
                     {/* Question Content */}
                     <div className="flex-1">
-                      <Link 
-                        to={`/question/${question.id}`}
-                        className="text-xl font-semibold text-gradient-primary hover:scale-105 transition-all duration-300 mb-3 block"
-                      >
+                                              <Link 
+                          to={`/question/${question.id}`}
+                          className="text-xl font-semibold text-gradient-primary transition-colors duration-300 mb-3 block"
+                        >
                         {question.title}
                       </Link>
                       <div 
@@ -322,7 +322,7 @@ const Index = () => {
                           {question.tags.map((tag) => (
                             <Badge 
                               key={tag} 
-                              className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 hover:from-blue-600/30 hover:to-purple-600/30 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 cursor-pointer transform hover:scale-105"
+                              className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 hover:from-blue-600/30 hover:to-purple-600/30 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 cursor-pointer"
                             >
                               {tag}
                             </Badge>
