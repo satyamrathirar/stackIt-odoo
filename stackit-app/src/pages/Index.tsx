@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Filter, ChevronUp, MessageSquare, User, Bell, Plus } from "lucide-react";
+import { Search, Filter, ChevronUp, MessageSquare, User, Bell, Plus, TrendingUp, Clock, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +22,8 @@ const mockQuestions = [
     answers: 3,
     views: "3 ans",
     author: "User Name",
-    timeAgo: "2 hours ago"
+    timeAgo: "2 hours ago",
+    isHot: true
   },
   {
     id: 2,
@@ -33,7 +34,8 @@ const mockQuestions = [
     answers: 2,
     views: "2 ans", 
     author: "Developer123",
-    timeAgo: "4 hours ago"
+    timeAgo: "4 hours ago",
+    isHot: false
   }
 ];
 
@@ -43,34 +45,41 @@ const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+
       {/* Header */}
-      <header className="border-b border-slate-700 bg-slate-800/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-blue-400 hover:text-blue-300 transition-colors">
+      <header className="glass-dark border-b border-white/10 sticky top-0 z-50 backdrop-blur-xl">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <Link to="/" className="text-3xl font-bold gradient-text hover:scale-105 transition-transform duration-300">
             StackIt
           </Link>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             {isLoggedIn ? (
               <>
-                <div className="relative">
-                  <Bell className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-xs rounded-full h-4 w-4 flex items-center justify-center text-white">
+                <div className="relative group">
+                  <Bell className="h-6 w-6 text-gray-300 hover:text-white cursor-pointer transition-all duration-300 group-hover:scale-110" />
+                  <span className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-xs rounded-full h-5 w-5 flex items-center justify-center text-white font-medium pulse-glow">
                     2
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4" />
+                <div className="flex items-center gap-3 group cursor-pointer">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-glow group-hover:shadow-glow-purple transition-all duration-300 group-hover:scale-110">
+                    <User className="h-5 w-5" />
                   </div>
-                  <span className="text-sm">User Name</span>
+                  <span className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">User Name</span>
                 </div>
               </>
             ) : (
               <Button 
                 onClick={() => setIsLoggedIn(true)}
-                className="bg-blue-600 hover:bg-blue-700 transition-colors"
+                className="gradient-primary hover:shadow-glow transform hover:scale-105 transition-all duration-300 font-medium px-6 py-2"
               >
                 Login
               </Button>
@@ -79,45 +88,48 @@ const Index = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Search and Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <div className="flex flex-col lg:flex-row gap-6 mb-8">
+          <div className="relative flex-1 group">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 group-focus-within:text-blue-400 transition-colors duration-300" />
             <Input
-              placeholder="Search questions..."
+              placeholder="Search questions, tags, or users..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-slate-800 border-slate-600 text-white placeholder:text-gray-400 focus:border-blue-500"
+              className="pl-12 pr-4 py-3 bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm"
             />
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Button 
               variant="outline" 
-              className="bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
+              className="gradient-primary text-white border-transparent hover:shadow-glow transform hover:scale-105 transition-all duration-300 font-medium"
             >
               <Link to="/ask" className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
+                <Plus className="h-5 w-5" />
                 Ask New Question
               </Link>
             </Button>
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="border-slate-600 text-black hover:bg-slate-700">
-                  <Filter className="h-4 w-4 mr-2" />
+                <Button variant="outline" className="bg-slate-800/50 border-slate-600/50 text-white hover:bg-slate-700/50 hover:border-slate-500 transition-all duration-300 backdrop-blur-sm">
+                  <Filter className="h-5 w-5 mr-2" />
                   {selectedFilter}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-slate-800 border-slate-600">
-                <DropdownMenuItem onClick={() => setSelectedFilter("Newest")} className="text-white hover:bg-slate-700">
+              <DropdownMenuContent className="bg-slate-800/90 border-slate-600/50 backdrop-blur-xl">
+                <DropdownMenuItem onClick={() => setSelectedFilter("Newest")} className="text-white hover:bg-slate-700/50 transition-colors">
+                  <Clock className="h-4 w-4 mr-2" />
                   Newest
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSelectedFilter("Unanswered")} className="text-white hover:bg-slate-700">
+                <DropdownMenuItem onClick={() => setSelectedFilter("Unanswered")} className="text-white hover:bg-slate-700/50 transition-colors">
+                  <MessageSquare className="h-4 w-4 mr-2" />
                   Unanswered
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSelectedFilter("Most Voted")} className="text-white hover:bg-slate-700">
+                <DropdownMenuItem onClick={() => setSelectedFilter("Most Voted")} className="text-white hover:bg-slate-700/50 transition-colors">
+                  <TrendingUp className="h-4 w-4 mr-2" />
                   Most Voted
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -126,52 +138,64 @@ const Index = () => {
         </div>
 
         {/* Questions List */}
-        <div className="space-y-4">
-          {mockQuestions.map((question) => (
-            <Card key={question.id} className="bg-slate-800 border-slate-700 hover:bg-slate-750 transition-colors">
+        <div className="space-y-6">
+          {mockQuestions.map((question, index) => (
+            <Card 
+              key={question.id} 
+              className="glass-dark border-white/10 hover:border-blue-500/30 card-hover group fade-in"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex flex-col lg:flex-row gap-6">
                   {/* Vote and Stats */}
-                  <div className="flex md:flex-col items-center md:items-start gap-4 md:gap-2 min-w-[120px]">
-                    <div className="flex items-center gap-1 text-sm">
-                      <ChevronUp className="h-4 w-4 text-green-400" />
-                      <span className="text-green-400 font-medium">{question.votes}</span>
+                  <div className="flex lg:flex-col items-center lg:items-start gap-6 lg:gap-3 min-w-[140px]">
+                    <div className="flex items-center gap-2 text-sm group-hover:scale-110 transition-transform duration-300">
+                      <ChevronUp className="h-5 w-5 text-green-400" />
+                      <span className="text-green-400 font-semibold text-lg">{question.votes}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-400">
-                      <MessageSquare className="h-4 w-4" />
-                      <span>{question.answers}</span>
+                    <div className="flex items-center gap-2 text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
+                      <MessageSquare className="h-5 w-5" />
+                      <span className="font-medium">{question.answers}</span>
                     </div>
-                    <Badge variant="secondary" className="bg-slate-700 text-gray-300">
+                    <Badge variant="secondary" className="bg-slate-700/50 text-gray-300 border-slate-600/50">
                       {question.views}
                     </Badge>
+                    {question.isHot && (
+                      <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0">
+                        <Award className="h-3 w-3 mr-1" />
+                        Hot
+                      </Badge>
+                    )}
                   </div>
 
                   {/* Question Content */}
                   <div className="flex-1">
                     <Link 
                       to={`/question/${question.id}`}
-                      className="text-xl font-semibold text-blue-400 hover:text-blue-300 transition-colors mb-2 block"
+                      className="text-xl font-semibold text-gradient-primary hover:scale-105 transition-all duration-300 mb-3 block"
                     >
                       {question.title}
                     </Link>
-                    <p className="text-gray-300 mb-3 line-clamp-2">
+                    <p className="text-gray-300 mb-4 line-clamp-2 leading-relaxed">
                       {question.description}
                     </p>
                     
-                    <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
                       <div className="flex flex-wrap gap-2">
                         {question.tags.map((tag) => (
                           <Badge 
                             key={tag} 
-                            className="bg-blue-600/20 text-blue-300 hover:bg-blue-600/30 transition-colors"
+                            className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 hover:from-blue-600/30 hover:to-purple-600/30 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 cursor-pointer transform hover:scale-105"
                           >
                             {tag}
                           </Badge>
                         ))}
                       </div>
                       
-                      <div className="text-sm text-gray-400">
-                        asked by <span className="text-blue-400">{question.author}</span> {question.timeAgo}
+                      <div className="text-sm text-gray-400 flex items-center gap-2">
+                        <span>asked by</span>
+                        <span className="text-gradient-primary font-medium">{question.author}</span>
+                        <span>{question.timeAgo}</span>
                       </div>
                     </div>
                   </div>
@@ -182,9 +206,9 @@ const Index = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex justify-center mt-8">
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="border-slate-600 text-black hover:bg-slate-700">
+        <div className="flex justify-center mt-12">
+          <div className="flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm rounded-xl p-2 border border-white/10">
+            <Button variant="outline" size="sm" className="border-slate-600/50 text-white hover:bg-slate-700/50 transition-all duration-300">
               Previous
             </Button>
             {[1, 2, 3, 4, 5, 6, 7].map((page) => (
@@ -193,14 +217,14 @@ const Index = () => {
                 variant={page === 1 ? "default" : "outline"}
                 size="sm"
                 className={page === 1 
-                  ? "bg-blue-600 hover:bg-blue-700" 
-                  : "border-slate-600 text-black hover:bg-slate-700"
+                  ? "gradient-primary hover:shadow-glow" 
+                  : "border-slate-600/50 text-white hover:bg-slate-700/50 transition-all duration-300"
                 }
               >
                 {page}
               </Button>
             ))}
-            <Button variant="outline" size="sm" className="border-slate-600 text-black hover:bg-slate-700">
+            <Button variant="outline" size="sm" className="border-slate-600/50 text-white hover:bg-slate-700/50 transition-all duration-300">
               Next
             </Button>
           </div>
