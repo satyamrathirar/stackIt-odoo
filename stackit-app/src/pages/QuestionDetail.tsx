@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { api } from '@/services/api';
 import { Question, Answer } from '@/types/database';
+import RichTextEditor from '@/components/RichTextEditor';
 
 const QuestionDetail = () => {
   const { id } = useParams();
@@ -226,9 +227,21 @@ const QuestionDetail = () => {
                 </h1>
                 
                 <div className="prose prose-invert max-w-none mb-6">
-                  <p className="text-gray-300 leading-relaxed text-lg">
-                    {question.description}
-                  </p>
+                  <div 
+                    className="text-gray-300 prose prose-invert max-w-none leading-relaxed text-lg"
+                    dangerouslySetInnerHTML={{
+                      __html: question.description
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        .replace(/~~(.*?)~~/g, '<del>$1</del>')
+                        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">$1</a>')
+                        .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto rounded-lg my-4" />')
+                        .replace(/\n• (.*?)(?=\n|$)/g, '<li>$1</li>')
+                        .replace(/\n\d+\. (.*?)(?=\n|$)/g, '<li>$1</li>')
+                        .replace(/(<li>.*?<\/li>)/s, '<ul class="list-disc list-inside space-y-1 my-4">$1</ul>')
+                        .replace(/\n/g, '<br />')
+                    }}
+                  />
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-6 mb-6">
@@ -316,9 +329,21 @@ const QuestionDetail = () => {
                     {/* Answer Content */}
                     <div className="flex-1">
                       <div className="prose prose-invert max-w-none mb-6">
-                        <div className="text-gray-300 whitespace-pre-wrap">
-                          {answer.content}
-                        </div>
+                        <div 
+                          className="text-gray-300 prose prose-invert max-w-none"
+                          dangerouslySetInnerHTML={{
+                            __html: answer.content
+                              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                              .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                              .replace(/~~(.*?)~~/g, '<del>$1</del>')
+                              .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">$1</a>')
+                              .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto rounded-lg my-4" />')
+                              .replace(/\n• (.*?)(?=\n|$)/g, '<li>$1</li>')
+                              .replace(/\n\d+\. (.*?)(?=\n|$)/g, '<li>$1</li>')
+                              .replace(/(<li>.*?<\/li>)/s, '<ul class="list-disc list-inside space-y-1 my-4">$1</ul>')
+                              .replace(/\n/g, '<br />')
+                          }}
+                        />
                       </div>
 
                       <div className="flex items-center justify-between pt-4 border-t border-white/10">
@@ -358,11 +383,10 @@ const QuestionDetail = () => {
             </h3>
             
             <div className="space-y-4">
-              <Textarea
+              <RichTextEditor
                 value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
+                onChange={setAnswer}
                 placeholder="Write your answer here..."
-                className="min-h-[200px] bg-slate-800/50 border-slate-600/50 text-white placeholder-gray-400"
               />
               
               <div className="flex justify-end pt-4">
