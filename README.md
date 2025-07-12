@@ -13,3 +13,25 @@ Gaurav Agarwal - gauravagarwal1694@gmail.com
 Siddhi Singhal - singhalsiddhi5@gmail.com  
 Priyanshu Bansal - priyanshub243@gmail.com  
 Satyam Rathi - satyam.rathi47@gmail.com  
+
+
+# StackIt – A Minimal Q&A Forum Platform (Odoo + React)
+
+StackIt is a minimalistic, community-driven Question & Answer forum that promotes structured knowledge sharing and collaborative learning. This version integrates a modern **React** frontend with a custom **Odoo** backend module for seamless full-stack functionality.
+
+---
+
+## 📌 Features
+
+- 📄 Ask and answer questions
+- 🔖 Add and filter by tags
+- 📝 Markdown-based Rich Text Editor
+- 👍 Upvote / 👎 Downvote system
+- 🧩 Modular architecture with Odoo
+- 🎨 Clean UI with TailwindCSS and ShadCN
+- 🔒 User authentication and roles (planned)
+
+---
+
+## 🧱 Tech Stack
+
