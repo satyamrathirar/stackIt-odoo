@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { api } from '@/services/api';
 import { Question, Answer } from '@/types/database';
 import RichTextEditor from '@/components/RichTextEditor';
+import { auth } from '@/lib/firebase';
 
 const QuestionDetail = () => {
   const { id } = useParams();
@@ -18,10 +19,8 @@ const QuestionDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [questionVote, setQuestionVote] = useState(0);
-  const [answerVotes, setAnswerVotes] = useState<{[key: number]: number}>({});
-  const [hasVotedQuestion, setHasVotedQuestion] = useState(false);
-  const [hasVotedAnswers, setHasVotedAnswers] = useState<{ [key: number]: boolean }>({});
+  const [userQuestionVote, setUserQuestionVote] = useState<number | null>(null);
+  const [userAnswerVotes, setUserAnswerVotes] = useState<{[key: number]: number}>({});
 
   // Load question and answers data
   useEffect(() => {
@@ -48,6 +47,12 @@ const QuestionDetail = () => {
         }
         setAnswers(answersData || []);
         
+        // Load user's previous votes if authenticated
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          await loadUserVotes(currentUser.uid, questionId, answersData || []);
+        }
+        
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -58,44 +63,146 @@ const QuestionDetail = () => {
     loadData();
   }, [id]);
 
+  // Function to load user's previous votes
+  const loadUserVotes = async (userId: string, questionId: number, answers: Answer[]) => {
+    try {
+      // Load user's vote for the question
+      const { data: questionVoteData } = await api.getUserVoteForQuestion(userId, questionId);
+      if (questionVoteData) {
+        setUserQuestionVote(questionVoteData.vote_type);
+      }
+
+      // Load user's votes for all answers
+      const answerVotes: {[key: number]: number} = {};
+      for (const answer of answers) {
+        const { data: answerVoteData } = await api.getUserVoteForAnswer(userId, answer.id);
+        if (answerVoteData) {
+          answerVotes[answer.id] = answerVoteData.vote_type;
+        }
+      }
+      setUserAnswerVotes(answerVotes);
+    } catch (err) {
+      console.error('Error loading user votes:', err);
+    }
+  };
+
+  // Function to refresh data after voting
+  const refreshData = async () => {
+    if (!id) return;
+    
+    try {
+      const questionId = parseInt(id);
+      
+      // Refresh question data
+      const { data: questionData, error: questionError } = await api.getQuestion(questionId);
+      if (!questionError && questionData) {
+        setQuestion(questionData);
+      }
+      
+      // Refresh answers data
+      const { data: answersData, error: answersError } = await api.getAnswers(questionId);
+      if (!answersError && answersData) {
+        setAnswers(answersData);
+      }
+      
+      // Refresh user votes
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        await loadUserVotes(currentUser.uid, questionId, answersData || []);
+      }
+      
+    } catch (err) {
+      console.error('Error refreshing data:', err);
+    }
+  };
+
   const handleVote = async (
     type: 'question' | 'answer',
     direction: 'up' | 'down',
     answerId?: number
   ) => {
-    if (type === 'question') {
-      if (hasVotedQuestion) {
-        alert("You've already voted on this question.");
-        return;
+    // Check if user is authenticated
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      alert("You must be logged in to vote.");
+      return;
+    }
+
+    const userId = currentUser.uid;
+    const voteType = direction === 'up' ? 1 : -1;
+
+    try {
+      if (type === 'question') {
+        // Check if user has already voted the same way
+        if (userQuestionVote === voteType) {
+          alert("You've already voted this way on this question.");
+          return;
+        }
+
+        // Call API to persist vote
+        const { error } = await api.voteQuestion(userId, question!.id, voteType);
+        
+        if (error) {
+          console.error('Error voting on question:', error);
+          alert("Failed to vote on question. Please try again.");
+          return;
+        }
+
+        // Update local state
+        setUserQuestionVote(voteType);
+        
+        // Refresh data to get updated vote counts
+        await refreshData();
+        
+      } else if (answerId) {
+        // Check if user has already voted the same way
+        if (userAnswerVotes[answerId] === voteType) {
+          alert("You've already voted this way on this answer.");
+          return;
+        }
+
+        // Call API to persist vote
+        const { error } = await api.voteAnswer(userId, answerId, voteType);
+        
+        if (error) {
+          console.error('Error voting on answer:', error);
+          alert("Failed to vote on answer. Please try again.");
+          return;
+        }
+
+        // Update local state
+        setUserAnswerVotes(prev => ({
+          ...prev,
+          [answerId]: voteType,
+        }));
+        
+        // Refresh data to get updated vote counts
+        await refreshData();
       }
-      setQuestionVote(prev => direction === 'up' ? prev + 1 : prev - 1);
-      setHasVotedQuestion(true);
-    } else if (answerId) {
-      if (hasVotedAnswers[answerId]) {
-        alert("You've already voted on this answer.");
-        return;
-      }
-      setAnswerVotes(prev => ({
-        ...prev,
-        [answerId]: (prev[answerId] || 0) + (direction === 'up' ? 1 : -1),
-      }));
-      setHasVotedAnswers(prev => ({
-        ...prev,
-        [answerId]: true,
-      }));
+    } catch (err) {
+      console.error('Error in handleVote:', err);
+      alert("An error occurred while voting. Please try again.");
     }
   };
 
   const handleSubmitAnswer = async () => {
     if (!question || !answer.trim()) return;
     
+    // Check if user is authenticated
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      alert("You must be logged in to submit an answer.");
+      return;
+    }
+    
     setSubmitting(true);
     
     try {
+      const author = currentUser.displayName || currentUser.email || "User";
       const newAnswer = {
         question_id: question.id,
         content: answer,
-        author: "Current User", // This should come from auth context
+        author: author,
         votes: 0,
         is_accepted: false
       };
@@ -205,16 +312,26 @@ const QuestionDetail = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleVote('question', 'up')}
-                  className="p-2 hover:bg-green-500/10 hover:text-green-400 transition-all duration-300 group"
+                  disabled={userQuestionVote === 1}
+                  className={`p-2 transition-all duration-300 group ${
+                    userQuestionVote === 1 
+                      ? 'text-green-400 bg-green-500/20 cursor-not-allowed' 
+                      : 'hover:bg-green-500/10 hover:text-green-400'
+                  }`}
                 >
                   <ChevronUp className="h-7 w-7 group-hover:scale-110 transition-transform" />
                 </Button>
-                <span className="text-2xl font-bold text-gradient-primary">{question.votes + questionVote}</span>
+                <span className="text-2xl font-bold text-gradient-primary">{question.votes}</span>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handleVote('question', 'down')}
-                  className="p-2 hover:bg-red-500/10 hover:text-red-400 transition-all duration-300 group"
+                  disabled={userQuestionVote === -1}
+                  className={`p-2 transition-all duration-300 group ${
+                    userQuestionVote === -1 
+                      ? 'text-red-400 bg-red-500/20 cursor-not-allowed' 
+                      : 'hover:bg-red-500/10 hover:text-red-400'
+                  }`}
                 >
                   <ChevronDown className="h-7 w-7 group-hover:scale-110 transition-transform" />
                 </Button>
@@ -306,16 +423,26 @@ const QuestionDetail = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleVote('answer', 'up', answer.id)}
-                        className="p-2 hover:bg-green-500/10 hover:text-green-400 transition-all duration-300 group"
+                        disabled={userAnswerVotes[answer.id] === 1}
+                        className={`p-2 transition-all duration-300 group ${
+                          userAnswerVotes[answer.id] === 1 
+                            ? 'text-green-400 bg-green-500/20 cursor-not-allowed' 
+                            : 'hover:bg-green-500/10 hover:text-green-400'
+                        }`}
                       >
                         <ChevronUp className="h-7 w-7 group-hover:scale-110 transition-transform" />
                       </Button>
-                      <span className="text-2xl font-bold text-gradient-primary">{answerVotes[answer.id] || answer.votes}</span>
+                      <span className="text-2xl font-bold text-gradient-primary">{answer.votes}</span>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleVote('answer', 'down', answer.id)}
-                        className="p-2 hover:bg-red-500/10 hover:text-red-400 transition-all duration-300 group"
+                        disabled={userAnswerVotes[answer.id] === -1}
+                        className={`p-2 transition-all duration-300 group ${
+                          userAnswerVotes[answer.id] === -1 
+                            ? 'text-red-400 bg-red-500/20 cursor-not-allowed' 
+                            : 'hover:bg-red-500/10 hover:text-red-400'
+                        }`}
                       >
                         <ChevronDown className="h-7 w-7 group-hover:scale-110 transition-transform" />
                       </Button>
