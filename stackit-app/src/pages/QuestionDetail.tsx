@@ -8,41 +8,232 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import MDEditor from "@uiw/react-md-editor";
 
-const QuestionDetail = () => {
-  const { id } = useParams();
-  const [answer, setAnswer] = useState("");
-  const [questionVote, setQuestionVote] = useState(0);
-  const [answerVotes, setAnswerVotes] = useState<{[key: number]: number}>({1: 5, 2: -2});
+// Mock questions database - this would normally come from an API
+const mockQuestionsDatabase = [
+  {
+    id: 1,
+    title: "Introduce yourself",
+    description: "Please give a brief introduction about yourself including your background, interests, and experience.",
+    tags: ["Introduction", "General"],
+    votes: 5,
+    views: 342,
+    author: "User Name",
+    timeAgo: "2 hours ago"
+  },
+  {
+    id: 2,
+    title: "React useState hook not updating state immediately",
+    description: "I'm trying to update state in React but the component doesn't re-render with the new value. I've tried using useEffect but it's not working as expected. Can someone help me understand why the state isn't updating immediately?",
+    tags: ["React", "Hooks"],
+    votes: 12,
+    views: 156,
+    author: "Developer123",
+    timeAgo: "4 hours ago"
+  },
+  {
+    id: 3,
+    title: "How to implement authentication in Next.js",
+    description: "I need to add user authentication to my Next.js application. What's the best approach for implementing JWT tokens and session management?",
+    tags: ["Next.js", "Authentication"],
+    votes: 8,
+    views: 89,
+    author: "NextDev",
+    timeAgo: "6 hours ago"
+  },
+  {
+    id: 4,
+    title: "TypeScript interface vs type",
+    description: "What's the difference between interface and type in TypeScript? When should I use each? I'm confused about the performance implications and best practices.",
+    tags: ["TypeScript"],
+    votes: 15,
+    views: 234,
+    author: "TSUser",
+    timeAgo: "1 day ago"
+  },
+  {
+    id: 5,
+    title: "CSS Grid layout tutorial",
+    description: "Can someone explain CSS Grid layout with practical examples? I want to create a responsive layout but I'm struggling with the grid-template-areas property.",
+    tags: ["CSS", "Grid"],
+    votes: 3,
+    views: 67,
+    author: "CSSLearner",
+    timeAgo: "2 days ago"
+  },
+  {
+    id: 6,
+    title: "Database optimization techniques",
+    description: "What are the best practices for optimizing database queries and performance? I'm working with a large dataset and need to improve query execution time.",
+    tags: ["Database", "Performance"],
+    votes: 22,
+    views: 445,
+    author: "DBExpert",
+    timeAgo: "3 days ago"
+  },
+  {
+    id: 7,
+    title: "Docker container management",
+    description: "How do I manage multiple Docker containers efficiently? I need to set up a development environment with multiple services.",
+    tags: ["Docker", "DevOps"],
+    votes: 7,
+    views: 123,
+    author: "DevOpsUser",
+    timeAgo: "4 days ago"
+  },
+  {
+    id: 8,
+    title: "API rate limiting implementation",
+    description: "What's the best way to implement rate limiting in a REST API? I need to prevent abuse while maintaining good user experience.",
+    tags: ["API", "Security"],
+    votes: 18,
+    views: 178,
+    author: "APIDev",
+    timeAgo: "5 days ago"
+  },
+  {
+    id: 9,
+    title: "Vue.js vs React comparison",
+    description: "I'm choosing between Vue.js and React for a new project. What are the pros and cons of each framework? Which one is better for enterprise applications?",
+    tags: ["Vue.js", "React", "Frontend"],
+    votes: 25,
+    views: 567,
+    author: "FrameworkFan",
+    timeAgo: "1 week ago"
+  },
+  {
+    id: 10,
+    title: "Microservices architecture patterns",
+    description: "What are the common patterns and best practices for microservices architecture? I'm planning to migrate from a monolithic application.",
+    tags: ["Microservices", "Architecture"],
+    votes: 31,
+    views: 789,
+    author: "ArchitectUser",
+    timeAgo: "1 week ago"
+  },
+  {
+    id: 11,
+    title: "Git workflow strategies",
+    description: "What's the best Git workflow for a team of 10 developers? I need to implement branching strategies and code review processes.",
+    tags: ["Git", "Workflow"],
+    votes: 14,
+    views: 234,
+    author: "GitMaster",
+    timeAgo: "1 week ago"
+  },
+  {
+    id: 12,
+    title: "Machine learning model deployment",
+    description: "How do I deploy a machine learning model to production? I need to set up monitoring, versioning, and A/B testing for my ML models.",
+    tags: ["Machine Learning", "Deployment"],
+    votes: 28,
+    views: 456,
+    author: "MLDev",
+    timeAgo: "2 weeks ago"
+  },
+  {
+    id: 13,
+    title: "Web accessibility guidelines",
+    description: "What are the key accessibility guidelines for web development? I want to make my application accessible to users with disabilities.",
+    tags: ["Accessibility", "Web Development"],
+    votes: 9,
+    views: 123,
+    author: "A11yDev",
+    timeAgo: "2 weeks ago"
+  },
+  {
+    id: 14,
+    title: "GraphQL vs REST API",
+    description: "When should I choose GraphQL over REST API? I'm building a new API and need to understand the trade-offs between these approaches.",
+    tags: ["GraphQL", "REST", "API"],
+    votes: 19,
+    views: 345,
+    author: "APIArchitect",
+    timeAgo: "2 weeks ago"
+  },
+  {
+    id: 15,
+    title: "Serverless function optimization",
+    description: "How do I optimize serverless functions for better performance? I'm experiencing cold starts and need to reduce execution time.",
+    tags: ["Serverless", "Performance"],
+    votes: 11,
+    views: 167,
+    author: "ServerlessDev",
+    timeAgo: "3 weeks ago"
+  }
+];
 
-  const mockQuestion = {
-  id: 1,
-  title: "Introduce yourself",
-  description: "Please give a brief introduction about yourself including your background, interests, and experience.",
-  tags: ["Introduction", "General"],
-  votes: 5,
-  views: 342,
-  author: "User Name",
-  timeAgo: "2 hours ago"
-};
-
-  const mockAnswers = [
+// Mock answers database
+const mockAnswersDatabase = {
+  1: [
     {
       id: 1,
-      content: "You can use the CONCAT function in SQL to combine two columns:\n\n```sql\nSELECT CONCAT(first_name, ' ', last_name) AS full_name\nFROM your_table;\n```\n\nThis will create a new column called 'full_name' that combines the first_name and last_name columns with a space in between.",
-      author: "SQLExpert",
+      content: "Hello! I'm a software developer with 5 years of experience in web development. I specialize in React, Node.js, and Python. I love working on open-source projects and learning new technologies. In my free time, I enjoy hiking and reading tech blogs.",
+      author: "DevUser123",
       timeAgo: "1 hour ago",
       isAccepted: true,
       votes: 5
     },
     {
       id: 2,
-      content: "Another approach is to use the pipe operator (||) which works in some SQL dialects:\n\n```sql\nSELECT first_name || ' ' || last_name AS full_name\nFROM your_table;\n```",
-      author: "DatabaseGuru",
+      content: "Hi there! I'm a junior developer just starting my journey in tech. I'm currently learning JavaScript and React. Looking forward to connecting with other developers and learning from the community!",
+      author: "JuniorDev",
       timeAgo: "30 minutes ago",
       isAccepted: false,
-      votes: -2
+      votes: 2
     }
-  ];
+  ],
+  2: [
+    {
+      id: 1,
+      content: "The issue you're experiencing is likely due to React's asynchronous state updates. When you call setState, React doesn't immediately update the state. Instead, it schedules an update for the next render cycle.\n\nHere's how to fix it:\n\n```javascript\nconst [count, setCount] = useState(0);\n\n// Wrong way - state won't update immediately\nconst handleClick = () => {\n  setCount(count + 1);\n  console.log(count); // This will show the old value\n};\n\n// Correct way - use functional update\nconst handleClick = () => {\n  setCount(prevCount => prevCount + 1);\n  console.log(count); // Still shows old value, but state will update correctly\n};\n\n// If you need the new value immediately, use useEffect\nuseEffect(() => {\n  console.log('Count updated:', count);\n}, [count]);\n```",
+      author: "ReactExpert",
+      timeAgo: "2 hours ago",
+      isAccepted: true,
+      votes: 8
+    }
+  ],
+  3: [
+    {
+      id: 1,
+      content: "For Next.js authentication, I recommend using NextAuth.js. It's the most popular and well-maintained solution:\n\n```javascript\n// Install NextAuth\nnpm install next-auth\n\n// Create pages/api/auth/[...nextauth].js\nimport NextAuth from 'next-auth';\nimport Providers from 'next-auth/providers';\n\nexport default NextAuth({\n  providers: [\n    Providers.GitHub({\n      clientId: process.env.GITHUB_ID,\n      clientSecret: process.env.GITHUB_SECRET,\n    }),\n  ],\n  callbacks: {\n    async jwt(token, user) {\n      return token;\n    },\n    async session(session, token) {\n      return session;\n    },\n  },\n});\n```\n\nThis provides JWT tokens, session management, and supports multiple providers out of the box.",
+      author: "NextAuthDev",
+      timeAgo: "3 hours ago",
+      isAccepted: true,
+      votes: 6
+    }
+  ],
+  4: [
+    {
+      id: 1,
+      content: "Here are the key differences between `interface` and `type` in TypeScript:\n\n**Interfaces:**\n- Can be extended and merged\n- Better for object shapes\n- More flexible for API contracts\n\n```typescript\ninterface User {\n  name: string;\n  age: number;\n}\n\ninterface AdminUser extends User {\n  role: 'admin';\n}\n```\n\n**Types:**\n- Can represent unions, primitives, and complex types\n- Better for utility types and complex transformations\n- Cannot be merged\n\n```typescript\ntype Status = 'loading' | 'success' | 'error';\ntype UserResponse = User | null;\n```\n\n**When to use each:**\n- Use `interface` for object shapes and API contracts\n- Use `type` for unions, primitives, and utility types",
+      author: "TypeScriptGuru",
+      timeAgo: "1 day ago",
+      isAccepted: true,
+      votes: 12
+    }
+  ],
+  5: [
+    {
+      id: 1,
+      content: "CSS Grid is powerful for creating complex layouts. Here's a practical example:\n\n```css\n.container {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));\n  grid-template-areas:\n    'header header header'\n    'sidebar main aside'\n    'footer footer footer';\n  gap: 1rem;\n}\n\n.header { grid-area: header; }\n.sidebar { grid-area: sidebar; }\n.main { grid-area: main; }\n.aside { grid-area: aside; }\n.footer { grid-area: footer; }\n```\n\nThis creates a responsive layout that adapts to different screen sizes.",
+      author: "CSSMaster",
+      timeAgo: "1 day ago",
+      isAccepted: true,
+      votes: 4
+    }
+  ]
+};
+
+const QuestionDetail = () => {
+  const { id } = useParams();
+  const [answer, setAnswer] = useState("");
+  const [questionVote, setQuestionVote] = useState(0);
+  const [answerVotes, setAnswerVotes] = useState<{[key: number]: number}>({});
+
+  // Find the question based on the ID from URL
+  const questionId = parseInt(id || "1");
+  const mockQuestion = mockQuestionsDatabase.find(q => q.id === questionId) || mockQuestionsDatabase[0];
+  const mockAnswers = mockAnswersDatabase[questionId] || [];
 
   const handleVote = (type: 'question' | 'answer', direction: 'up' | 'down', answerId?: number) => {
     if (type === 'question') {
@@ -88,7 +279,7 @@ const QuestionDetail = () => {
         <div className="text-sm text-gray-400 mb-4">
           <Link to="/" className="hover:text-blue-400">Questions</Link>
           <span className="mx-2">→</span>
-          <span>How to join 2 columns...</span>
+          <span>{mockQuestion.title}</span>
         </div>
 
         {/* Question */}
