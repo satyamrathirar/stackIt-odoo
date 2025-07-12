@@ -6,4 +6,4 @@ Name                   Email
 Gaurav Agarwal         gauravagarwal1694@gmail.com  
 Satyam Rathi           satyam.rathi47@gmail.com  
 Siddhi Singhal         singhalsiddhi5@gmail.com
-Priyanshu Banal        priyanshub243@gmail.com
+Priyanshu Bansal       priyanshub243@gmail.com
