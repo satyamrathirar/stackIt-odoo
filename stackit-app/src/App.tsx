@@ -9,6 +9,9 @@ import QuestionDetail from "./pages/QuestionDetail";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+
 
 const queryClient = new QueryClient();
 

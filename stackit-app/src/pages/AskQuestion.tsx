@@ -7,6 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+import MDEditor from "@uiw/react-md-editor";
 
 const AskQuestion = () => {
   const [title, setTitle] = useState("");
@@ -134,13 +137,18 @@ const AskQuestion = () => {
                 </Button>
               </div>
               
-              <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe your question in detail. Include code examples, error messages, or any relevant context..."
-                rows={12}
-                className="bg-slate-800/50 border-slate-600/50 border-t-0 rounded-t-none rounded-b-xl text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 resize-none transition-all duration-300 backdrop-blur-sm text-base leading-relaxed"
-              />
+              <div
+                data-color-mode="dark"
+                className="bg-slate-800/50 border border-slate-600/50 rounded-xl overflow-hidden backdrop-blur-sm"
+              >
+              <MDEditor
+                  value={description}
+                  onChange={(val) => setDescription(val || "")}
+                  preview="edit" // can be 'live', 'edit', or 'preview'
+                  height={300}
+                />
+              </div>
+
               <p className="text-sm text-gray-500">Provide enough context for others to understand and help you</p>
             </div>
 
