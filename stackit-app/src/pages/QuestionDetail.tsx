@@ -14,15 +14,15 @@ const QuestionDetail = () => {
   const [answerVotes, setAnswerVotes] = useState<{[key: number]: number}>({1: 5, 2: -2});
 
   const mockQuestion = {
-    id: 1,
-    title: "How to join 2 columns in a data set to make a separate column in SQL",
-    description: "I do not know the code for it as I am a beginner. As an example what I need to do is like there is a column 1 containing First name and column 2 consists of last name I want a column to combine both.",
-    tags: ["SQL", "JOIN"],
-    votes: 5,
-    views: 342,
-    author: "User Name",
-    timeAgo: "2 hours ago"
-  };
+  id: 1,
+  title: "Introduce yourself",
+  description: "Please give a brief introduction about yourself including your background, interests, and experience.",
+  tags: ["Introduction", "General"],
+  votes: 5,
+  views: 342,
+  author: "User Name",
+  timeAgo: "2 hours ago"
+};
 
   const mockAnswers = [
     {
