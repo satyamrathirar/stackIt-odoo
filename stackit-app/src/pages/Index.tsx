@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Search, Filter, ChevronUp, MessageSquare, User, Bell, Plus, TrendingUp, Clock, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -199,8 +199,9 @@ const mockQuestions = [
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("Newest");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
   
   // Pagination settings
   const questionsPerPage = 5; // Show 5 questions per page
@@ -279,7 +280,7 @@ const Index = () => {
               </>
             ) : (
               <Button 
-                onClick={() => setIsLoggedIn(true)}
+                onClick={() => navigate("/login")}
                 className="gradient-primary hover:shadow-glow transform hover:scale-105 transition-all duration-300 font-medium px-6 py-2"
               >
                 Login
