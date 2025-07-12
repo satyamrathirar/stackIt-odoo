@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Filter, ChevronUp, MessageSquare, User, Bell, Plus, TrendingUp, Clock, Award, X } from "lucide-react";
+import { Search, Filter, ChevronUp, MessageSquare, User, Bell, Plus, TrendingUp, Clock, Award, X, CheckCircle, AlertCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { auth } from "../lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -27,6 +28,43 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [totalQuestions, setTotalQuestions] = useState(0);
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: 'message',
+      message: 'You have a new message from @developer123',
+      time: '2 minutes ago',
+      read: false
+    },
+    {
+      id: 2,
+      type: 'question',
+      message: 'New question posted: "How to implement authentication in React?"',
+      time: '15 minutes ago',
+      read: false
+    },
+    {
+      id: 3,
+      type: 'vote',
+      message: 'Your answer received 5 upvotes!',
+      time: '1 hour ago',
+      read: false
+    },
+    {
+      id: 4,
+      type: 'answer',
+      message: 'Someone answered your question about CSS Grid',
+      time: '2 hours ago',
+      read: false
+    },
+    {
+      id: 5,
+      type: 'accepted',
+      message: 'Your answer was marked as the best answer!',
+      time: '3 hours ago',
+      read: false
+    }
+  ]);
   const navigate = useNavigate();
   
   // Listen for authentication state changes
@@ -52,6 +90,24 @@ const Index = () => {
       console.error("Error signing out:", error);
     }
   };
+
+  const markNotificationAsRead = (notificationId: number) => {
+    setNotifications(prev => 
+      prev.map(notification => 
+        notification.id === notificationId 
+          ? { ...notification, read: true }
+          : notification
+      )
+    );
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(prev => 
+      prev.map(notification => ({ ...notification, read: true }))
+    );
+  };
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   // Pagination settings
   const questionsPerPage = 10; // Show 10 questions per page
@@ -138,12 +194,83 @@ const Index = () => {
           <div className="flex items-center gap-6">
             {isLoggedIn ? (
               <>
-                <div className="relative group">
-                  <Bell className="h-6 w-6 text-gray-300 hover:text-white cursor-pointer transition-all duration-300" />
-                  <span className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-xs rounded-full h-5 w-5 flex items-center justify-center text-white font-medium pulse-glow">
-                    2
-                  </span>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="relative group cursor-pointer">
+                      <Bell className="h-6 w-6 text-gray-300 hover:text-white transition-all duration-300" />
+                      {unreadCount > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-500 text-xs rounded-full h-5 w-5 flex items-center justify-center text-white font-medium pulse-glow">
+                          {unreadCount}
+                        </span>
+                      )}
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-slate-800/90 border-slate-600/50 backdrop-blur-xl w-80 max-h-96 overflow-y-auto">
+                    <div className="p-3 border-b border-slate-600/50">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold text-white">Notifications</h3>
+                        {unreadCount > 0 && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={markAllAsRead}
+                            className="text-blue-400 hover:text-blue-300 text-xs"
+                          >
+                            Mark all as read
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="p-2">
+                      {notifications.length === 0 ? (
+                        <div className="text-center py-8 text-gray-400">
+                          <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                          <p>No notifications</p>
+                        </div>
+                      ) : (
+                        notifications.map((notification) => (
+                          <DropdownMenuItem
+                            key={notification.id}
+                            onClick={() => markNotificationAsRead(notification.id)}
+                            className={`p-3 rounded-lg mb-2 cursor-pointer transition-all duration-200 ${
+                              notification.read 
+                                ? 'bg-slate-700/30 hover:bg-slate-700/50' 
+                                : 'bg-blue-500/10 hover:bg-blue-500/20 border-l-2 border-blue-500'
+                            }`}
+                          >
+                            <div className="flex items-start gap-3 w-full">
+                              <div className={`mt-1 ${
+                                notification.type === 'message' ? 'text-green-400' :
+                                notification.type === 'question' ? 'text-blue-400' :
+                                notification.type === 'vote' ? 'text-orange-400' :
+                                notification.type === 'answer' ? 'text-purple-400' :
+                                notification.type === 'accepted' ? 'text-yellow-400' :
+                                'text-gray-400'
+                              }`}>
+                                {notification.type === 'message' && <MessageSquare className="h-4 w-4" />}
+                                {notification.type === 'question' && <AlertCircle className="h-4 w-4" />}
+                                {notification.type === 'vote' && <TrendingUp className="h-4 w-4" />}
+                                {notification.type === 'answer' && <CheckCircle className="h-4 w-4" />}
+                                {notification.type === 'accepted' && <Star className="h-4 w-4" />}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className={`text-sm ${notification.read ? 'text-gray-300' : 'text-white'} line-clamp-2`}>
+                                  {notification.message}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {notification.time}
+                                </p>
+                              </div>
+                              {!notification.read && (
+                                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                              )}
+                            </div>
+                          </DropdownMenuItem>
+                        ))
+                      )}
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <div className="flex items-center gap-3 group cursor-pointer">
                   <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-glow group-hover:shadow-glow-purple transition-all duration-300">
                     <User className="h-5 w-5" />
