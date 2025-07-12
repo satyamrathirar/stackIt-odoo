@@ -100,43 +100,6 @@ const AskQuestion = () => {
                 Question Details
               </label>
               
-              {/* Enhanced Rich Text Toolbar */}
-              <div className="bg-slate-800/50 border border-slate-600/50 rounded-t-xl p-3 flex flex-wrap gap-2 backdrop-blur-sm">
-                <Button size="sm" variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-700/50 transition-all duration-300 group">
-                  <Bold className="h-4 w-4 group-hover:scale-110" />
-                </Button>
-                <Button size="sm" variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-700/50 transition-all duration-300 group">
-                  <Italic className="h-4 w-4 group-hover:scale-110" />
-                </Button>
-                <Separator orientation="vertical" className="bg-slate-500/50 mx-1" />
-                <Button size="sm" variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-700/50 transition-all duration-300 group">
-                  <List className="h-4 w-4 group-hover:scale-110" />
-                </Button>
-                <Button size="sm" variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-700/50 transition-all duration-300 group">
-                  <Code className="h-4 w-4 group-hover:scale-110" />
-                </Button>
-                <Button size="sm" variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-700/50 transition-all duration-300 group">
-                  <Quote className="h-4 w-4 group-hover:scale-110" />
-                </Button>
-                <Separator orientation="vertical" className="bg-slate-500/50 mx-1" />
-                <Button size="sm" variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-700/50 transition-all duration-300 group">
-                  <LinkIcon className="h-4 w-4 group-hover:scale-110" />
-                </Button>
-                <Button size="sm" variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-700/50 transition-all duration-300 group">
-                  <Image className="h-4 w-4 group-hover:scale-110" />
-                </Button>
-                <Separator orientation="vertical" className="bg-slate-500/50 mx-1" />
-                <Button size="sm" variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-700/50 transition-all duration-300 group">
-                  <AlignLeft className="h-4 w-4 group-hover:scale-110" />
-                </Button>
-                <Button size="sm" variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-700/50 transition-all duration-300 group">
-                  <AlignCenter className="h-4 w-4 group-hover:scale-110" />
-                </Button>
-                <Button size="sm" variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-700/50 transition-all duration-300 group">
-                  <AlignRight className="h-4 w-4 group-hover:scale-110" />
-                </Button>
-              </div>
-              
               <div
                 data-color-mode="dark"
                 className="bg-slate-800/50 border border-slate-600/50 rounded-xl overflow-hidden backdrop-blur-sm"
