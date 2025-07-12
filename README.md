@@ -3,7 +3,7 @@ Problem Statement : StackIt is a minimal question-and-answer platform that suppo
 
 ## Setup - Instructions : 
 1. clone the repo  
-2. cd <repo folder>  
+2. cd \<repo folder>  
 3. cd stackIt-app  
 4. `npm install`  
 5. `npm run dev`  
