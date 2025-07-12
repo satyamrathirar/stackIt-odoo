@@ -1,21 +1,20 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Bold, Italic, List, Link as LinkIcon, Image, AlignLeft, AlignCenter, AlignRight, Code, Quote, Hash } from "lucide-react";
+import { ArrowLeft, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-import MDEditor from "@uiw/react-md-editor";
+import RichTextEditor from "@/components/RichTextEditor";
+import { supabase } from "../lib/supabase";
+import { auth } from "../lib/firebase";
 
 const AskQuestion = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleAddTag = (e: React.KeyboardEvent) => {
@@ -32,10 +31,30 @@ const AskQuestion = () => {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
-  const handleSubmit = () => {
-    // Handle form submission
-    console.log("Submitting question:", { title, description, tags });
-    navigate("/");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const user = auth.currentUser;
+    if (!user) {
+      alert("You must be logged in to ask a question.");
+      setSubmitting(false);
+      return;
+    }
+    const author = user.displayName || user.email || "User";
+    const questionObj = {
+      title,
+      description,
+      tags,
+      author,
+    };
+    console.log("Submitting question:", questionObj);
+    const { error } = await supabase.from("questions").insert([questionObj]);
+    setSubmitting(false);
+    if (error) {
+      alert("Error submitting question: " + error.message);
+      return;
+    }
+    navigate("/?page=1");
   };
 
   return (
@@ -59,12 +78,6 @@ const AskQuestion = () => {
               StackIt
             </Link>
           </div>
-          
-          <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-glow group-hover:shadow-glow-purple transition-all duration-300 group-hover:scale-110">
-              <span className="text-sm font-medium">U</span>
-            </div>
-          </div>
         </div>
       </header>
 
@@ -80,81 +93,77 @@ const AskQuestion = () => {
             <p className="text-gray-400 text-lg">Share your knowledge and help others learn</p>
           </CardHeader>
           <CardContent className="space-y-8">
-            {/* Title */}
-            <div className="space-y-3">
-              <label className="block text-lg font-semibold text-gray-200">
-                Question Title
-              </label>
-              <Input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="What's your question? Be specific..."
-                className="bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm text-lg py-4"
-              />
-              <p className="text-sm text-gray-500">A clear title helps others understand your question quickly</p>
-            </div>
-
-            {/* Description with Rich Text Editor */}
-            <div className="space-y-3">
-              <label className="block text-lg font-semibold text-gray-200">
-                Question Details
-              </label>
-              
-              <div
-                data-color-mode="dark"
-                className="bg-slate-800/50 border border-slate-600/50 rounded-xl overflow-hidden backdrop-blur-sm"
-              >
-              <MDEditor
-                  value={description}
-                  onChange={(val) => setDescription(val || "")}
-                  preview="edit" // can be 'live', 'edit', or 'preview'
-                  height={300}
+            <form onSubmit={handleSubmit}>
+              {/* Title */}
+              <div className="space-y-3">
+                <label className="block text-lg font-semibold text-gray-200">
+                  Question Title
+                </label>
+                <Input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="What's your question? Be specific..."
+                  className="bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm text-lg py-4"
+                  required
+                  disabled={submitting}
                 />
+                <p className="text-sm text-gray-500">A clear title helps others understand your question quickly</p>
               </div>
 
-              <p className="text-sm text-gray-500">Provide enough context for others to understand and help you</p>
-            </div>
+              {/* Description with Rich Text Editor */}
+              <div className="space-y-3">
+                <label className="block text-lg font-semibold text-gray-200">
+                  Question Details
+                </label>
+                <RichTextEditor
+                  value={description}
+                  onChange={setDescription}
+                  placeholder="Provide detailed information about your question..."
+                />
+                <p className="text-sm text-gray-500">Provide enough context for others to understand and help you</p>
+              </div>
 
-            {/* Tags */}
-            <div className="space-y-3">
-              <label className="block text-lg font-semibold text-gray-200">
-                Tags
-              </label>
-              <Input
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleAddTag}
-                placeholder="Add relevant tags (press Enter to add each tag)..."
-                className="bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm py-4"
-              />
-              
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-3 mt-4">
-                  {tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 hover:from-red-600/20 hover:to-pink-600/20 hover:text-red-300 cursor-pointer transition-all duration-300 border border-blue-500/20 hover:border-red-500/40 transform hover:scale-105 group"
-                      onClick={() => removeTag(tag)}
-                    >
-                      {tag}
-                      <span className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">×</span>
-                    </Badge>
-                  ))}
-                </div>
-              )}
-              <p className="text-sm text-gray-500">Tags help categorize your question and make it easier to find</p>
-            </div>
+              {/* Tags */}
+              <div className="space-y-3">
+                <label className="block text-lg font-semibold text-gray-200">
+                  Tags
+                </label>
+                <Input
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleAddTag}
+                  placeholder="Add relevant tags (press Enter to add each tag)..."
+                  className="bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm py-4"
+                  disabled={submitting}
+                />
+                {tags.length > 0 && (
+                  <div className="flex flex-wrap gap-3 mt-4">
+                    {tags.map((tag) => (
+                      <Badge
+                        key={tag}
+                        className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 hover:from-red-600/20 hover:to-pink-600/20 hover:text-red-300 cursor-pointer transition-all duration-300 border border-blue-500/20 hover:border-red-500/40 transform hover:scale-105 group"
+                        onClick={() => removeTag(tag)}
+                      >
+                        {tag}
+                        <span className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">×</span>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+                <p className="text-sm text-gray-500">Tags help categorize your question and make it easier to find</p>
+              </div>
 
-            {/* Submit Button */}
-            <div className="flex justify-end pt-6 border-t border-white/10">
-              <Button 
-                onClick={handleSubmit}
-                className="gradient-primary hover:shadow-glow transform hover:scale-105 transition-all duration-300 font-medium px-8 py-3 text-lg"
-                disabled={!title.trim() || !description.trim()}
-              >
-                Submit Question
-              </Button>
-            </div>
+              {/* Submit Button */}
+              <div className="flex justify-end pt-6 border-t border-white/10">
+                <Button
+                  type="submit"
+                  className="gradient-primary hover:shadow-glow transform hover:scale-105 transition-all duration-300 font-medium px-8 py-3 text-lg"
+                  disabled={submitting || !title.trim() || !description.trim()}
+                >
+                  {submitting ? "Submitting..." : "Submit Question"}
+                </Button>
+              </div>
+            </form>
           </CardContent>
         </Card>
       </div>
