@@ -179,7 +179,7 @@ const Index = () => {
               placeholder="Search questions, tags, or users..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 pr-4 py-3 bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm"
+              className="pl-12 pr-4 py-3 bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl"
             />
             {searchQuery && (
               <button
@@ -204,7 +204,7 @@ const Index = () => {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="bg-slate-800/50 border-slate-600/50 text-white hover:bg-slate-700/50 hover:border-slate-500 transition-all duration-300 backdrop-blur-sm">
+                <Button variant="outline" className="bg-slate-800/50 border-slate-600/50 text-white hover:bg-slate-700/50 hover:border-slate-500 transition-all duration-300">
                   <Filter className="h-5 w-5 mr-2" />
                   {selectedFilter}
                 </Button>
@@ -301,9 +301,21 @@ const Index = () => {
                       >
                         {question.title}
                       </Link>
-                      <p className="text-gray-300 mb-4 line-clamp-2 leading-relaxed">
-                        {question.description}
-                      </p>
+                      <div 
+                        className="text-gray-300 mb-4 line-clamp-2 leading-relaxed"
+                        dangerouslySetInnerHTML={{
+                          __html: question.description
+                            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+                            .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+                            .replace(/~~(.*?)~~/g, '<del class="line-through">$1</del>')
+                            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">$1</a>')
+                            .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto rounded-lg my-4" />')
+                            .replace(/\n• (.*?)(?=\n|$)/g, '<li>$1</li>')
+                            .replace(/\n\d+\. (.*?)(?=\n|$)/g, '<li>$1</li>')
+                            .replace(/(<li>.*?<\/li>)/s, '<ul class="list-disc list-inside space-y-1 my-4">$1</ul>')
+                            .replace(/\n/g, '<br />')
+                        }}
+                      />
                       
                       <div className="flex flex-wrap items-center justify-between gap-4">
                         <div className="flex flex-wrap gap-2">
@@ -333,7 +345,7 @@ const Index = () => {
 
         {/* Pagination */}
         <div className="flex justify-center mt-12">
-          <div className="flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm rounded-xl p-2 border border-white/10">
+          <div className="flex items-center gap-3 bg-slate-800/50 rounded-xl p-2 border border-white/10">
             <Button 
               variant="outline" 
               size="sm" 

@@ -10,6 +10,7 @@ import { api } from '@/services/api';
 import { Question, Answer } from '@/types/database';
 import RichTextEditor from '@/components/RichTextEditor';
 import { auth } from '@/lib/firebase';
+import { parseMarkdown } from '@/lib/utils';
 
 const QuestionDetail = () => {
   const { id } = useParams();
@@ -347,16 +348,7 @@ const QuestionDetail = () => {
                   <div 
                     className="text-gray-300 prose prose-invert max-w-none leading-relaxed text-lg"
                     dangerouslySetInnerHTML={{
-                      __html: question.description
-                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                        .replace(/~~(.*?)~~/g, '<del>$1</del>')
-                        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">$1</a>')
-                        .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto rounded-lg my-4" />')
-                        .replace(/\n• (.*?)(?=\n|$)/g, '<li>$1</li>')
-                        .replace(/\n\d+\. (.*?)(?=\n|$)/g, '<li>$1</li>')
-                        .replace(/(<li>.*?<\/li>)/s, '<ul class="list-disc list-inside space-y-1 my-4">$1</ul>')
-                        .replace(/\n/g, '<br />')
+                      __html: parseMarkdown(question.description)
                     }}
                   />
                 </div>
@@ -460,9 +452,9 @@ const QuestionDetail = () => {
                           className="text-gray-300 prose prose-invert max-w-none"
                           dangerouslySetInnerHTML={{
                             __html: answer.content
-                              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                              .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                              .replace(/~~(.*?)~~/g, '<del>$1</del>')
+                              .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+                              .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+                              .replace(/~~(.*?)~~/g, '<del class="line-through">$1</del>')
                               .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">$1</a>')
                               .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto rounded-lg my-4" />')
                               .replace(/\n• (.*?)(?=\n|$)/g, '<li>$1</li>')
