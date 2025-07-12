@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import MDEditor from "@uiw/react-md-editor";
 
 const QuestionDetail = () => {
   const { id } = useParams();
@@ -197,9 +198,10 @@ const QuestionDetail = () => {
                     {/* Answer Content */}
                     <div className="flex-1">
                       <div className="prose prose-invert max-w-none mb-4">
-                        <p className="text-gray-300 leading-relaxed whitespace-pre-line">
-                          {answer.content}
-                        </p>
+                        <MDEditor.Markdown
+                            source={answer.content}
+                            className="text-gray-300 prose prose-invert max-w-none"
+                        />
                       </div>
 
                       <div className="flex items-center justify-between">
@@ -231,43 +233,17 @@ const QuestionDetail = () => {
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold mb-4">Submit Your Answer</h3>
             
-            {/* Rich Text Toolbar */}
-            <div className="bg-slate-700 border border-slate-600 rounded-t-md p-2 flex flex-wrap gap-1 mb-0">
-              <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-600">
-                <Bold className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-600">
-                <Italic className="h-4 w-4" />
-              </Button>
-              <Separator orientation="vertical" className="bg-slate-500 mx-1" />
-              <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-600">
-                <List className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-600">
-                <LinkIcon className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-600">
-                <Image className="h-4 w-4" />
-              </Button>
-              <Separator orientation="vertical" className="bg-slate-500 mx-1" />
-              <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-600">
-                <AlignLeft className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-600">
-                <AlignCenter className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-600">
-                <AlignRight className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            <Textarea
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              placeholder="Write your answer..."
-              rows={6}
-              className="bg-slate-700 border-slate-600 border-t-0 rounded-t-none text-white placeholder:text-gray-400 focus:border-blue-500 resize-none"
-            />
+
+
+        <div data-color-mode="dark" className="bg-slate-700 rounded-md p-2">
+  <MDEditor
+    value={answer}
+    onChange={setAnswer}
+    height={200}
+    preview="edit"
+  />
+</div>
+
             
             <div className="flex justify-end mt-4">
               <Button 
