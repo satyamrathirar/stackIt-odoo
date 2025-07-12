@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import MDEditor from "@uiw/react-md-editor";
+import { supabase } from '@/lib/supabase'
+import { Question, Answer, Vote } from '@/types/database'
 
 // Mock questions database - this would normally come from an API
 const mockQuestionsDatabase = [

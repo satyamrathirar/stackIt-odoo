@@ -13,190 +13,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { auth } from "../lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-
-// Extended mock questions to demonstrate pagination
-const mockQuestions = [
-  {
-    id: 1,
-    title: "Introduce yourself",
-    description: "Please give a brief introduction about yourself including your background, interests, and experience...",
-    tags: ["Introduction", "General"],
-    votes: 5,
-    answers: 3,
-    views: "3 ans",
-    author: "User Name",
-    timeAgo: "2 hours ago",
-    isHot: true
-  },
-  {
-    id: 2,
-    title: "React useState hook not updating state immediately",
-    description: "I'm trying to update state in React but the component doesn't re-render with the new value...",
-    tags: ["React", "Hooks"],
-    votes: 12,
-    answers: 2,
-    views: "2 ans", 
-    author: "Developer123",
-    timeAgo: "4 hours ago",
-    isHot: false
-  },
-  {
-    id: 3,
-    title: "How to implement authentication in Next.js",
-    description: "I need to add user authentication to my Next.js application. What's the best approach...",
-    tags: ["Next.js", "Authentication"],
-    votes: 8,
-    answers: 5,
-    views: "1 ans",
-    author: "NextDev",
-    timeAgo: "6 hours ago",
-    isHot: false
-  },
-  {
-    id: 4,
-    title: "TypeScript interface vs type",
-    description: "What's the difference between interface and type in TypeScript? When should I use each?",
-    tags: ["TypeScript"],
-    votes: 15,
-    answers: 7,
-    views: "4 ans",
-    author: "TSUser",
-    timeAgo: "1 day ago",
-    isHot: false
-  },
-  {
-    id: 5,
-    title: "CSS Grid layout tutorial",
-    description: "Can someone explain CSS Grid layout with practical examples?",
-    tags: ["CSS", "Grid"],
-    votes: 3,
-    answers: 1,
-    views: "1 ans",
-    author: "CSSLearner",
-    timeAgo: "2 days ago",
-    isHot: false
-  },
-  {
-    id: 6,
-    title: "Database optimization techniques",
-    description: "What are the best practices for optimizing database queries and performance?",
-    tags: ["Database", "Performance"],
-    votes: 22,
-    answers: 9,
-    views: "6 ans",
-    author: "DBExpert",
-    timeAgo: "3 days ago",
-    isHot: false
-  },
-  {
-    id: 7,
-    title: "Docker container management",
-    description: "How do I manage multiple Docker containers efficiently?",
-    tags: ["Docker", "DevOps"],
-    votes: 7,
-    answers: 4,
-    views: "2 ans",
-    author: "DevOpsUser",
-    timeAgo: "4 days ago",
-    isHot: false
-  },
-  {
-    id: 8,
-    title: "API rate limiting implementation",
-    description: "What's the best way to implement rate limiting in a REST API?",
-    tags: ["API", "Security"],
-    votes: 18,
-    answers: 6,
-    views: "3 ans",
-    author: "APIDev",
-    timeAgo: "5 days ago",
-    isHot: false
-  },
-  {
-    id: 9,
-    title: "Vue.js vs React comparison",
-    description: "I'm choosing between Vue.js and React for a new project. What are the pros and cons?",
-    tags: ["Vue.js", "React", "Frontend"],
-    votes: 25,
-    answers: 12,
-    views: "8 ans",
-    author: "FrameworkFan",
-    timeAgo: "1 week ago",
-    isHot: false
-  },
-  {
-    id: 10,
-    title: "Microservices architecture patterns",
-    description: "What are the common patterns and best practices for microservices architecture?",
-    tags: ["Microservices", "Architecture"],
-    votes: 31,
-    answers: 15,
-    views: "10 ans",
-    author: "ArchitectUser",
-    timeAgo: "1 week ago",
-    isHot: false
-  },
-  {
-    id: 11,
-    title: "Git workflow strategies",
-    description: "What's the best Git workflow for a team of 10 developers?",
-    tags: ["Git", "Workflow"],
-    votes: 14,
-    answers: 8,
-    views: "5 ans",
-    author: "GitMaster",
-    timeAgo: "1 week ago",
-    isHot: false
-  },
-  {
-    id: 12,
-    title: "Machine learning model deployment",
-    description: "How do I deploy a machine learning model to production?",
-    tags: ["Machine Learning", "Deployment"],
-    votes: 28,
-    answers: 11,
-    views: "7 ans",
-    author: "MLDev",
-    timeAgo: "2 weeks ago",
-    isHot: false
-  },
-  {
-    id: 13,
-    title: "Web accessibility guidelines",
-    description: "What are the key accessibility guidelines for web development?",
-    tags: ["Accessibility", "Web Development"],
-    votes: 9,
-    answers: 3,
-    views: "2 ans",
-    author: "A11yDev",
-    timeAgo: "2 weeks ago",
-    isHot: false
-  },
-  {
-    id: 14,
-    title: "GraphQL vs REST API",
-    description: "When should I choose GraphQL over REST API?",
-    tags: ["GraphQL", "REST", "API"],
-    votes: 19,
-    answers: 7,
-    views: "4 ans",
-    author: "APIArchitect",
-    timeAgo: "2 weeks ago",
-    isHot: false
-  },
-  {
-    id: 15,
-    title: "Serverless function optimization",
-    description: "How do I optimize serverless functions for better performance?",
-    tags: ["Serverless", "Performance"],
-    votes: 11,
-    answers: 5,
-    views: "3 ans",
-    author: "ServerlessDev",
-    timeAgo: "3 weeks ago",
-    isHot: false
-  }
-];
+import { supabase } from '../lib/supabase';
+import { Question, Answer, Vote } from '../types/database';
+import { api } from '../services/api';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -204,6 +23,9 @@ const Index = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [totalQuestions, setTotalQuestions] = useState(0);
   const navigate = useNavigate();
   
   // Listen for authentication state changes
@@ -235,7 +57,6 @@ const Index = () => {
   const predefinedPages = [1, 2, 3, 4, 5, 6, 7];
   
   // Calculate pagination
-  const totalQuestions = mockQuestions.length;
   const totalPages = Math.ceil(totalQuestions / questionsPerPage);
   
   // Determine which pages to show
@@ -251,11 +72,11 @@ const Index = () => {
       for (let i = 8; i <= totalPages; i++) {
         const startIndex = (i - 1) * questionsPerPage;
         const endIndex = startIndex + questionsPerPage;
-        const questionsOnPage = mockQuestions.slice(startIndex, endIndex);
+        // const questionsOnPage = mockQuestions.slice(startIndex, endIndex); // This line is no longer needed
         
-        if (questionsOnPage.length > 0) {
+        // if (questionsOnPage.length > 0) { // This line is no longer needed
           pages.push(i);
-        }
+        // }
       }
       
       return pages;
@@ -267,11 +88,25 @@ const Index = () => {
   // Get current page questions
   const startIndex = (currentPage - 1) * questionsPerPage;
   const endIndex = startIndex + questionsPerPage;
-  const currentQuestions = mockQuestions.slice(startIndex, endIndex);
+  const currentQuestions = questions; // Use questions from API
   
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      setLoading(true)
+      const { data, error, count } = await api.getQuestions(currentPage, questionsPerPage)
+      if (data) {
+        setQuestions(data)
+        setTotalQuestions(count || 0)
+      }
+      setLoading(false)
+    }
+    
+    fetchQuestions()
+  }, [currentPage])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
