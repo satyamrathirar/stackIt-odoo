@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Filter, ChevronUp, MessageSquare, User, Bell, Plus, TrendingUp, Clock, Award } from "lucide-react";
+import { Search, Filter, ChevronUp, MessageSquare, User, Bell, Plus, TrendingUp, Clock, Award, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +19,7 @@ import { api } from '../services/api';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("Newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -94,10 +95,20 @@ const Index = () => {
     setCurrentPage(page);
   };
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      setCurrentPage(1); // Reset to first page when searching
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   useEffect(() => {
     const fetchQuestions = async () => {
       setLoading(true)
-      const { data, error, count } = await api.getQuestions(currentPage, questionsPerPage)
+      const { data, error, count } = await api.getQuestions(currentPage, questionsPerPage, debouncedSearchQuery)
       if (data) {
         setQuestions(data)
         setTotalQuestions(count || 0)
@@ -106,7 +117,7 @@ const Index = () => {
     }
     
     fetchQuestions()
-  }, [currentPage])
+  }, [currentPage, debouncedSearchQuery])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
@@ -170,6 +181,14 @@ const Index = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 pr-4 py-3 bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm"
             />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
           
           <div className="flex gap-3">
@@ -208,72 +227,108 @@ const Index = () => {
           </div>
         </div>
 
+        {/* Search Results Info */}
+        {debouncedSearchQuery && (
+          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+            <p className="text-blue-300">
+              Search results for: <span className="font-semibold">"{debouncedSearchQuery}"</span>
+              {totalQuestions > 0 && (
+                <span className="ml-2 text-gray-400">
+                  ({totalQuestions} result{totalQuestions !== 1 ? 's' : ''})
+                </span>
+              )}
+            </p>
+          </div>
+        )}
+
         {/* Questions List */}
         <div className="space-y-6">
-          {currentQuestions.map((question, index) => (
-            <Card 
-              key={question.id} 
-              className="glass-dark border-white/10 hover:border-blue-500/30 card-hover group fade-in"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <CardContent className="p-6">
-                <div className="flex flex-col lg:flex-row gap-6">
-                  {/* Vote and Stats */}
-                  <div className="flex lg:flex-col items-center lg:items-start gap-6 lg:gap-3 min-w-[140px]">
-                    <div className="flex items-center gap-2 text-sm group-hover:scale-110 transition-transform duration-300">
-                      <ChevronUp className="h-5 w-5 text-green-400" />
-                      <span className="text-green-400 font-semibold text-lg">{question.votes}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
-                      <MessageSquare className="h-5 w-5" />
-                      <span className="font-medium">{question.answers}</span>
-                    </div>
-                    <Badge variant="secondary" className="bg-slate-700/50 text-gray-300 border-slate-600/50">
-                      {question.views}
-                    </Badge>
-                    {question.isHot && (
-                      <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0">
-                        <Award className="h-3 w-3 mr-1" />
-                        Hot
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <p className="text-gray-300">Searching questions...</p>
+            </div>
+          ) : currentQuestions.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg mb-2">
+                {debouncedSearchQuery ? 'No questions found for your search.' : 'No questions available.'}
+              </p>
+              {debouncedSearchQuery && (
+                <Button 
+                  variant="outline" 
+                  onClick={() => setSearchQuery('')}
+                  className="mt-4"
+                >
+                  Clear Search
+                </Button>
+              )}
+            </div>
+          ) : (
+            currentQuestions.map((question, index) => (
+              <Card 
+                key={question.id} 
+                className="glass-dark border-white/10 hover:border-blue-500/30 card-hover group fade-in"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <CardContent className="p-6">
+                  <div className="flex flex-col lg:flex-row gap-6">
+                    {/* Vote and Stats */}
+                    <div className="flex lg:flex-col items-center lg:items-start gap-6 lg:gap-3 min-w-[140px]">
+                      <div className="flex items-center gap-2 text-sm group-hover:scale-110 transition-transform duration-300">
+                        <ChevronUp className="h-5 w-5 text-green-400" />
+                        <span className="text-green-400 font-semibold text-lg">{question.votes}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
+                        <MessageSquare className="h-5 w-5" />
+                        <span className="font-medium">{question.answers}</span>
+                      </div>
+                      <Badge variant="secondary" className="bg-slate-700/50 text-gray-300 border-slate-600/50">
+                        {question.views}
                       </Badge>
-                    )}
-                  </div>
+                      {question.isHot && (
+                        <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0">
+                          <Award className="h-3 w-3 mr-1" />
+                          Hot
+                        </Badge>
+                      )}
+                    </div>
 
-                  {/* Question Content */}
-                  <div className="flex-1">
-                    <Link 
-                      to={`/question/${question.id}`}
-                      className="text-xl font-semibold text-gradient-primary hover:scale-105 transition-all duration-300 mb-3 block"
-                    >
-                      {question.title}
-                    </Link>
-                    <p className="text-gray-300 mb-4 line-clamp-2 leading-relaxed">
-                      {question.description}
-                    </p>
-                    
-                    <div className="flex flex-wrap items-center justify-between gap-4">
-                      <div className="flex flex-wrap gap-2">
-                        {question.tags.map((tag) => (
-                          <Badge 
-                            key={tag} 
-                            className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 hover:from-blue-600/30 hover:to-purple-600/30 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 cursor-pointer transform hover:scale-105"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
+                    {/* Question Content */}
+                    <div className="flex-1">
+                      <Link 
+                        to={`/question/${question.id}`}
+                        className="text-xl font-semibold text-gradient-primary hover:scale-105 transition-all duration-300 mb-3 block"
+                      >
+                        {question.title}
+                      </Link>
+                      <p className="text-gray-300 mb-4 line-clamp-2 leading-relaxed">
+                        {question.description}
+                      </p>
                       
-                      <div className="text-sm text-gray-400 flex items-center gap-2">
-                        <span>asked by</span>
-                        <span className="text-gradient-primary font-medium">{question.author}</span>
-                        <span>{question.timeAgo}</span>
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex flex-wrap gap-2">
+                          {question.tags.map((tag) => (
+                            <Badge 
+                              key={tag} 
+                              className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 hover:from-blue-600/30 hover:to-purple-600/30 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 cursor-pointer transform hover:scale-105"
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                        
+                        <div className="text-sm text-gray-400 flex items-center gap-2">
+                          <span>asked by</span>
+                          <span className="text-gradient-primary font-medium">{question.author}</span>
+                          <span>{question.timeAgo}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
 
         {/* Pagination */}

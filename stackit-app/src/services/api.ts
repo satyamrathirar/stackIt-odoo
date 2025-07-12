@@ -3,11 +3,17 @@ import { Question, Answer, Vote } from '@/types/database'
 
 export const api = {
   // Questions
-  async getQuestions(page = 1, limit = 5) {
+  async getQuestions(page = 1, limit = 5, searchQuery = '') {
     const offset = (page - 1) * limit
-    const { data, error, count } = await supabase
+    let query = supabase
       .from('questions')
       .select('*', { count: 'exact' })
+    
+    if (searchQuery.trim()) {
+      query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,tags.cs.{${searchQuery}}`)
+    }
+    
+    const { data, error, count } = await query
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)
     
