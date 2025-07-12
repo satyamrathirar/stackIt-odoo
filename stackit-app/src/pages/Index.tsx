@@ -105,7 +105,7 @@ const Index = () => {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="border-slate-600 text-white hover:bg-slate-700">
+                <Button variant="outline" className="border-slate-600 text-black hover:bg-slate-700">
                   <Filter className="h-4 w-4 mr-2" />
                   {selectedFilter}
                 </Button>
@@ -184,7 +184,7 @@ const Index = () => {
         {/* Pagination */}
         <div className="flex justify-center mt-8">
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="border-slate-600 text-white hover:bg-slate-700">
+            <Button variant="outline" size="sm" className="border-slate-600 text-black hover:bg-slate-700">
               Previous
             </Button>
             {[1, 2, 3, 4, 5, 6, 7].map((page) => (
@@ -194,13 +194,13 @@ const Index = () => {
                 size="sm"
                 className={page === 1 
                   ? "bg-blue-600 hover:bg-blue-700" 
-                  : "border-slate-600 text-white hover:bg-slate-700"
+                  : "border-slate-600 text-black hover:bg-slate-700"
                 }
               >
                 {page}
               </Button>
             ))}
-            <Button variant="outline" size="sm" className="border-slate-600 text-white hover:bg-slate-700">
+            <Button variant="outline" size="sm" className="border-slate-600 text-black hover:bg-slate-700">
               Next
             </Button>
           </div>
