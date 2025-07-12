@@ -176,7 +176,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-800/50 border border-slate-600/50 rounded-lg backdrop-blur-sm">
+      <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-800/50 border border-slate-600/50 rounded-lg">
         {/* Text Formatting */}
         <div className="flex items-center gap-1">
           <Button
@@ -285,9 +285,9 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           </Button>
           
           {showEmojiPicker && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowEmojiPicker(false)}>
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowEmojiPicker(false)}>
               <div 
-                className="bg-slate-800 border border-slate-600 rounded-lg shadow-lg p-4 min-w-[400px] max-w-[500px] max-h-[400px]"
+                className="bg-slate-800 border border-slate-600 rounded-lg shadow-2xl p-4 min-w-[400px] max-w-[500px] max-h-[400px]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex justify-between items-center mb-3">
@@ -358,7 +358,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="min-h-[200px] bg-slate-800/50 border-slate-600/50 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm"
+        className="min-h-[200px] bg-slate-800/50 border-slate-600/50 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl"
       />
 
       {/* Link Dialog */}

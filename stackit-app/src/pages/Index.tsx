@@ -179,7 +179,7 @@ const Index = () => {
               placeholder="Search questions, tags, or users..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 pr-4 py-3 bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm"
+              className="pl-12 pr-4 py-3 bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl"
             />
             {searchQuery && (
               <button
@@ -204,7 +204,7 @@ const Index = () => {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="bg-slate-800/50 border-slate-600/50 text-white hover:bg-slate-700/50 hover:border-slate-500 transition-all duration-300 backdrop-blur-sm">
+                <Button variant="outline" className="bg-slate-800/50 border-slate-600/50 text-white hover:bg-slate-700/50 hover:border-slate-500 transition-all duration-300">
                   <Filter className="h-5 w-5 mr-2" />
                   {selectedFilter}
                 </Button>
@@ -345,7 +345,7 @@ const Index = () => {
 
         {/* Pagination */}
         <div className="flex justify-center mt-12">
-          <div className="flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm rounded-xl p-2 border border-white/10">
+          <div className="flex items-center gap-3 bg-slate-800/50 rounded-xl p-2 border border-white/10">
             <Button 
               variant="outline" 
               size="sm" 

@@ -103,7 +103,7 @@ const AskQuestion = () => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="What's your question? Be specific..."
-                  className="bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm text-lg py-4"
+                  className="bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl text-lg py-4"
                   required
                   disabled={submitting}
                 />
@@ -133,7 +133,7 @@ const AskQuestion = () => {
                   onChange={(e) => setTagInput(e.target.value)}
                   onKeyDown={handleAddTag}
                   placeholder="Add relevant tags (press Enter to add each tag)..."
-                  className="bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm py-4"
+                  className="bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl py-4"
                   disabled={submitting}
                 />
                 {tags.length > 0 && (
