@@ -301,9 +301,21 @@ const Index = () => {
                       >
                         {question.title}
                       </Link>
-                      <p className="text-gray-300 mb-4 line-clamp-2 leading-relaxed">
-                        {question.description}
-                      </p>
+                      <div 
+                        className="text-gray-300 mb-4 line-clamp-2 leading-relaxed"
+                        dangerouslySetInnerHTML={{
+                          __html: question.description
+                            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+                            .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+                            .replace(/~~(.*?)~~/g, '<del class="line-through">$1</del>')
+                            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">$1</a>')
+                            .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto rounded-lg my-4" />')
+                            .replace(/\n• (.*?)(?=\n|$)/g, '<li>$1</li>')
+                            .replace(/\n\d+\. (.*?)(?=\n|$)/g, '<li>$1</li>')
+                            .replace(/(<li>.*?<\/li>)/s, '<ul class="list-disc list-inside space-y-1 my-4">$1</ul>')
+                            .replace(/\n/g, '<br />')
+                        }}
+                      />
                       
                       <div className="flex flex-wrap items-center justify-between gap-4">
                         <div className="flex flex-wrap gap-2">
