@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, Filter, ChevronUp, MessageSquare, User, Bell, Plus, TrendingUp, Clock, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { auth } from "../lib/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 // Extended mock questions to demonstrate pagination
 const mockQuestions = [
@@ -201,8 +203,33 @@ const Index = () => {
   const [selectedFilter, setSelectedFilter] = useState("Newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
   const navigate = useNavigate();
   
+  // Listen for authentication state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+        setUserName(user.displayName || user.email || "User");
+      } else {
+        setIsLoggedIn(false);
+        setUserName("");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   // Pagination settings
   const questionsPerPage = 5; // Show 5 questions per page
   const predefinedPages = [1, 2, 3, 4, 5, 6, 7];
@@ -275,8 +302,15 @@ const Index = () => {
                   <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-glow group-hover:shadow-glow-purple transition-all duration-300 group-hover:scale-110">
                     <User className="h-5 w-5" />
                   </div>
-                  <span className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">User Name</span>
+                  <span className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">{userName}</span>
                 </div>
+                <Button 
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="border-slate-600/50 text-white hover:bg-slate-700/50 transition-all duration-300"
+                >
+                  Logout
+                </Button>
               </>
             ) : (
               <Button 
