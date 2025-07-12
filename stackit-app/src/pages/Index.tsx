@@ -53,7 +53,7 @@ const Index = () => {
   };
 
   // Pagination settings
-  const questionsPerPage = 5; // Show 5 questions per page
+  const questionsPerPage = 10; // Show 10 questions per page
   const predefinedPages = [1, 2, 3, 4, 5, 6, 7];
   
   // Calculate pagination
