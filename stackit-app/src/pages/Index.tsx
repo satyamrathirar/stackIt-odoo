@@ -131,7 +131,7 @@ const Index = () => {
       {/* Header */}
       <header className="glass-dark border-b border-white/10 sticky top-0 z-50 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                      <Link to="/" className="text-3xl font-bold gradient-text transition-colors duration-300">
+                      <Link to="/" className="text-3xl font-bold text-white transition-colors duration-300">
               StackIt
             </Link>
           

@@ -282,7 +282,7 @@ const QuestionDetail = () => {
               <ArrowLeft className="h-5 w-5 transition-colors" />
               <span className="font-medium">Back to Questions</span>
             </Link>
-            <Link to="/" className="text-3xl font-bold gradient-text transition-colors duration-300">
+            <Link to="/" className="text-3xl font-bold text-white transition-colors duration-300">
               StackIt
             </Link>
           </div>

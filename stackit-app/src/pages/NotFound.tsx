@@ -26,7 +26,7 @@ const NotFound = () => {
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 glass-dark border-b border-white/10 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                      <Link to="/" className="text-3xl font-bold gradient-text transition-colors duration-300">
+                      <Link to="/" className="text-3xl font-bold text-white transition-colors duration-300">
               StackIt
             </Link>
         </div>
@@ -42,7 +42,7 @@ const NotFound = () => {
 
         {/* Main Content */}
         <div className="space-y-6">
-          <h1 className="text-8xl font-bold gradient-text animate-pulse">
+                      <h1 className="text-8xl font-bold text-white animate-pulse">
             404
           </h1>
           
