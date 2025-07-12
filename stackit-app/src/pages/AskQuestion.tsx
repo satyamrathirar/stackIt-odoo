@@ -3,11 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-import MDEditor from "@uiw/react-md-editor";
 import { supabase } from "../lib/supabase";
 import { auth } from "../lib/firebase";
 
@@ -112,22 +110,18 @@ const AskQuestion = () => {
                 <p className="text-sm text-gray-500">A clear title helps others understand your question quickly</p>
               </div>
 
-              {/* Description with Rich Text Editor */}
+              {/* Description with Textarea */}
               <div className="space-y-3">
                 <label className="block text-lg font-semibold text-gray-200">
                   Question Details
                 </label>
-                <div
-                  data-color-mode="dark"
-                  className="bg-slate-800/50 border border-slate-600/50 rounded-xl overflow-hidden backdrop-blur-sm"
-                >
-                  <MDEditor
-                    value={description}
-                    onChange={(val) => setDescription(val || "")}
-                    preview="edit"
-                    height={300}
-                  />
-                </div>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Provide detailed information about your question..."
+                  className="min-h-[300px] bg-slate-800/50 border-slate-600/50 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 rounded-xl backdrop-blur-sm text-lg"
+                  disabled={submitting}
+                />
                 <p className="text-sm text-gray-500">Provide enough context for others to understand and help you</p>
               </div>
 
