@@ -229,22 +229,44 @@ const QuestionDetail = () => {
   const [answer, setAnswer] = useState("");
   const [questionVote, setQuestionVote] = useState(0);
   const [answerVotes, setAnswerVotes] = useState<{[key: number]: number}>({});
+  // To prevent multiple votes by same user/session
+  const [hasVotedQuestion, setHasVotedQuestion] = useState(false);
+  const [hasVotedAnswers, setHasVotedAnswers] = useState<{ [key: number]: boolean }>({});
+  
 
   // Find the question based on the ID from URL
   const questionId = parseInt(id || "1");
   const mockQuestion = mockQuestionsDatabase.find(q => q.id === questionId) || mockQuestionsDatabase[0];
   const mockAnswers = mockAnswersDatabase[questionId] || [];
 
-  const handleVote = (type: 'question' | 'answer', direction: 'up' | 'down', answerId?: number) => {
+  const handleVote = (
+  type: 'question' | 'answer',
+  direction: 'up' | 'down',
+  answerId?: number
+    ) => {
     if (type === 'question') {
-      setQuestionVote(prev => direction === 'up' ? prev + 1 : prev - 1);
-    } else if (answerId) {
-      setAnswerVotes(prev => ({
-        ...prev,
-        [answerId]: (prev[answerId] || 0) + (direction === 'up' ? 1 : -1)
-      }));
+        if (hasVotedQuestion) {
+         alert("You've already voted on this question.");
+        return;
+     }
+    setQuestionVote(prev => direction === 'up' ? prev + 1 : prev - 1);
+    setHasVotedQuestion(true);
+  } else if (answerId) {
+    if (hasVotedAnswers[answerId]) {
+      alert("You've already voted on this answer.");
+      return;
     }
-  };
+    setAnswerVotes(prev => ({
+      ...prev,
+      [answerId]: (prev[answerId] || 0) + (direction === 'up' ? 1 : -1),
+    }));
+    setHasVotedAnswers(prev => ({
+      ...prev,
+      [answerId]: true,
+    }));
+  }
+};
+
 
   const handleSubmitAnswer = () => {
     console.log("Submitting answer:", answer);
